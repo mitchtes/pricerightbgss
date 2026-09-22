@@ -192,26 +192,26 @@
 
       <!-- DUAL COLUMN LEADERBOARD CONTAINER -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-        <!-- COLUMN 1: ROUND LEADERBOARD -->
-        <div class="bg-pink-50/60 p-4 rounded-2xl border border-pink-200 flex flex-col">
+        <!-- COLUMN 1: TOP 5 ROUND LEADERBOARD -->
+        <div class="bg-pink-50/60 p-5 rounded-2xl border border-pink-200 flex flex-col">
           <div class="flex justify-between items-center pb-3 border-b border-pink-200 mb-3">
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Round <span id="roundNumDisplay">1</span> Results
+              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Round <span id="roundNumDisplay" class="mx-1">1</span> Results (Top 5)
             </h3>
             <span class="text-[10px] text-red-600 font-bold">*Overbids = 0 pts</span>
           </div>
-          <div id="roundLeaderboardList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+          <div id="roundLeaderboardList" class="space-y-2.5"></div>
         </div>
 
-        <!-- COLUMN 2: OVERALL CUMULATIVE LEADERBOARD -->
-        <div class="bg-pink-100/60 p-4 rounded-2xl border border-pink-300 flex flex-col">
+        <!-- COLUMN 2: TOP 5 OVERALL CUMULATIVE LEADERBOARD -->
+        <div class="bg-pink-100/60 p-5 rounded-2xl border border-pink-300 flex flex-col">
           <div class="flex justify-between items-center pb-3 border-b border-pink-300 mb-3">
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings
+              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings (Top 5)
             </h3>
             <span class="text-[10px] text-pink-800 font-bold uppercase tracking-wider">Cumulative</span>
           </div>
-          <div id="overallLeaderboardList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+          <div id="overallLeaderboardList" class="space-y-2.5"></div>
         </div>
       </div>
 
@@ -233,7 +233,7 @@
       <div id="finalLeaderboardList" class="space-y-2 max-h-80 overflow-y-auto text-left"></div>
 
       <button onclick="location.reload()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
-        PLAY AGAIN
+        Let's Get Ready For Worship!
       </button>
     </div>
   </div>
@@ -575,29 +575,30 @@
           });
         });
 
-        // 1. ROUND STANDINGS (Sorted strictly by Round Points earned)
+        // 1. TOP 5 ROUND STANDINGS
         let roundSorted = [...roundList].sort((a, b) => b.points - a.points);
         const roundLb = document.getElementById('roundLeaderboardList');
         roundLb.innerHTML = '';
 
-        roundSorted.forEach((s, idx) => {
+        // Display Top 5 for Host
+        roundSorted.slice(0, 5).forEach((s, idx) => {
           const row = document.createElement('div');
           const isOverbid = s.points === 0 && s.reason;
-          row.className = `flex justify-between items-center p-2.5 rounded-xl border text-xs ${isOverbid ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100'}`;
+          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${isOverbid ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100 shadow-sm'}`;
           row.innerHTML = `
-            <div class="flex items-center space-x-2">
-              <span class="w-5 text-center font-black ${isOverbid ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
+            <div class="flex items-center space-x-3">
+              <span class="w-6 text-center font-black ${isOverbid ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
               <div>
-                <span class="font-bold text-gray-900 block truncate max-w-[120px]">${s.name}</span>
-                <span class="text-[10px] text-gray-500 block">${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
+                <span class="font-bold text-gray-900 block truncate max-w-[140px]">${s.name}</span>
+                <span class="text-xs text-gray-500 block">${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
               </div>
             </div>
-            <span class="font-black ${isOverbid ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
+            <span class="font-black text-base ${isOverbid ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
           `;
           roundLb.appendChild(row);
         });
 
-        // 2. OVERALL CUMULATIVE STANDINGS (Sorted by Total Accumulated Score)
+        // 2. TOP 5 OVERALL CUMULATIVE STANDINGS
         let overallSorted = [...roundList].sort((a, b) => b.total - a.total);
         const overallLb = document.getElementById('overallLeaderboardList');
         overallLb.innerHTML = '';
@@ -605,7 +606,6 @@
         let playerRankMap = {};
 
         overallSorted.forEach((s, idx) => {
-          // Find player's round rank for individual feedback
           let roundRank = roundSorted.findIndex(r => r.key === s.key) + 1;
 
           playerRankMap[s.key] = {
@@ -615,15 +615,18 @@
             total: s.total,
             reason: s.reason || null
           };
+        });
 
+        // Display Top 5 for Overall Standings
+        overallSorted.slice(0, 5).forEach((s, idx) => {
           const row = document.createElement('div');
-          row.className = `flex justify-between items-center p-2.5 rounded-xl border text-xs bg-white border-pink-200`;
+          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm bg-white border-pink-200 shadow-sm`;
           row.innerHTML = `
-            <div class="flex items-center space-x-2">
-              <span class="w-5 text-center font-black text-pink-800">#${idx + 1}</span>
-              <span class="font-bold text-gray-900 truncate max-w-[130px]">${s.name}</span>
+            <div class="flex items-center space-x-3">
+              <span class="w-6 text-center font-black text-pink-800">#${idx + 1}</span>
+              <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name}</span>
             </div>
-            <span class="font-black text-pink-950">${s.total} pts</span>
+            <span class="font-black text-base text-pink-950">${s.total} pts</span>
           `;
           overallLb.appendChild(row);
         });
