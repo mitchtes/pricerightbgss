@@ -203,18 +203,24 @@
     import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // Your exact Firebase project config
+<script>
     const firebaseConfig = {
       apiKey: "AIzaSyBaJRejECntNcDjQ0MCaCJflxzd9hp8lkU",
       authDomain: "price-is-right-b3eba.firebaseapp.com",
-      databaseURL: "https://price-is-right-b3eba-default-rtdb.firebaseio.com",
+      databaseURL: "https://price-is-right-b3eba-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "price-is-right-b3eba",
       storageBucket: "price-is-right-b3eba.firebasestorage.app",
       messagingSenderId: "716413846286",
       appId: "1:716413846286:web:eec1a6d1f9e5254e6b0d5f"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    let db;
+    try {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.database();
+    } catch(e) {
+      alert("Firebase Init Error: " + e.message);
+    }
 
     const itemsDeck = [
       { name: "Sumifru Philippines Bananas (700g)", price: 2.55, icon: "🍌", category: "Fresh Produce", desc: "Fresh high-land bananas imported from Philippines." },
