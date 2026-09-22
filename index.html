@@ -96,12 +96,12 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE (NO TIMER - HOST MANUALLY ENDS) -->
+  <!-- SCREEN 3: HOST GAME STAGE (NO TIMER) -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="kahoot-card p-6 md:p-8">
       <div class="flex flex-col md:flex-row gap-6 items-center">
-        <div id="itemIcon" class="text-7xl p-6 bg-purple-100 rounded-2xl border-2 border-purple-200 flex items-center justify-center">
-          🍌
+        <div class="w-48 h-48 p-2 bg-white rounded-2xl border-2 border-purple-100 flex items-center justify-center shadow-sm shrink-0">
+          <img id="itemImg" src="" alt="Product" class="max-h-full max-w-full object-contain">
         </div>
         <div class="flex-1 space-y-2 text-center md:text-left">
           <span id="itemCategory" class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Category</span>
@@ -110,7 +110,7 @@
         </div>
       </div>
 
-      <!-- Live Guess Submissions Progress & Manual Host Lock Button -->
+      <!-- Live Guess Submissions Progress -->
       <div class="mt-8 bg-purple-50 border-2 border-purple-200 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-center md:text-left">
           <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block">Live Submissions</span>
@@ -201,7 +201,6 @@
   </div>
 
   <script>
-    // Exact configuration pointing to your Singapore database instance
     const firebaseConfig = {
       apiKey: "AIzaSyBaJRejECntNcDjQ0MCaCJflxzd9hp8lkU",
       authDomain: "price-is-right-b3eba.firebaseapp.com",
@@ -220,17 +219,43 @@
       alert("Firebase Init Error: " + e.message);
     }
 
+    // Fixed 5 Items with FairPrice Prices & Image Assets
     const itemsDeck = [
-      { name: "Sumifru Philippines Bananas (700g)", price: 2.55, icon: "🍌", category: "Fresh Produce", desc: "Fresh high-land bananas imported from Philippines." },
-      { name: "Sunshine Enriched Softwhite Bread (400g)", price: 2.80, icon: "🍞", category: "Bakery", desc: "Classic white loaf enriched with vitamins and minerals." },
-      { name: "Meiji Pasteurized Fresh Milk (946ml)", price: 3.63, icon: "🥛", category: "Dairy", desc: "100% Pure fresh milk pasteurized for freshness." },
-      { name: "FairPrice 3-ply Facial Tissue (4 x 130s)", price: 4.80, icon: "🧻", category: "Household", desc: "Soft 100% virgin pulp 3-ply facial tissue." },
-      { name: "FairPrice Premium Kitchen Towels (8 rolls)", price: 5.85, icon: "🧻", category: "Household", desc: "Highly absorbent paper kitchen towels." },
-      { name: "Scott Extra Toilet Tissue (10 rolls)", price: 7.95, icon: "🧻", category: "Household", desc: "Extra soft, strong toilet tissue rolls." },
-      { name: "Milo UHT Packet Drink (24 x 200ml Carton)", price: 14.95, icon: "🧃", category: "Beverages", desc: "Carton pack of malt chocolate drinks." },
-      { name: "Ben & Jerry's Ice Cream Pint (473ml)", price: 15.18, icon: "🍦", category: "Frozen Treats", desc: "Premium ice cream pint in assorted flavors." },
-      { name: "SongHe AAA Thai Hom Mali Rice (5kg)", price: 16.20, icon: "🍚", category: "Pantry Staples", desc: "Fragrant premium grade AAA Thai jasmine rice." },
-      { name: "Dyson V8 Slim Fluffy Cordless Vacuum", price: 509.00, icon: "🧹", category: "Electronics", desc: "Lightweight cordless vacuum with powerful suction." }
+      { 
+        name: "Sumifru Philippines Bananas (700g)", 
+        price: 2.55, 
+        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060411.jpg", 
+        category: "Fresh Produce", 
+        desc: "Fresh high-land bananas imported from Philippines." 
+      },
+      { 
+        name: "Meiji Pasteurized Fresh Milk - Regular (946ml)", 
+        price: 3.63, 
+        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060408.jpg", 
+        category: "Dairy & Chilled", 
+        desc: "100% Pure fresh milk pasteurized for freshness." 
+      },
+      { 
+        name: "Milo UHT Packet Drink Less Sugar (24 x 200ml Carton)", 
+        price: 19.50, 
+        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060420.jpg", 
+        category: "Beverages", 
+        desc: "Carton pack of malt chocolate drinks." 
+      },
+      { 
+        name: "Ben & Jerry's Chocolate Fudge Brownie Pint (473ml)", 
+        price: 15.18, 
+        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060435.jpg", 
+        category: "Frozen Treats", 
+        desc: "Rich chocolate ice cream with fudgy brownie chunks." 
+      },
+      { 
+        name: "SongHe AAA Thai Hom Mali Rice (5kg)", 
+        price: 16.95, 
+        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060415.jpg", 
+        category: "Pantry Staples", 
+        desc: "Fragrant premium grade AAA Thai jasmine rice." 
+      }
     ];
 
     let currentGamePin = null;
@@ -267,7 +292,6 @@
 
       document.getElementById('hostLobbyScreen').classList.remove('hidden');
 
-      // Sync player roster live
       db.ref(`games/${currentGamePin}/players`).on('value', snapshot => {
         const players = snapshot.val() || {};
         const playerList = document.getElementById('playerList');
@@ -299,7 +323,7 @@
       document.getElementById('hostGameScreen').classList.remove('hidden');
 
       const item = itemsDeck[index];
-      document.getElementById('itemIcon').innerText = item.icon;
+      document.getElementById('itemImg').src = item.img;
       document.getElementById('itemName').innerText = item.name;
       document.getElementById('itemCategory').innerText = item.category;
       document.getElementById('itemDesc').innerText = item.desc;
