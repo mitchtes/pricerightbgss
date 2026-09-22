@@ -71,7 +71,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 2: HOST LOBBY (SHOWS QR CODE FIRST) -->
+  <!-- SCREEN 2: HOST LOBBY -->
   <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="bgss-card p-6 md:p-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 2B: FULL-PAGE GAME RULES (PRESENTED RIGHT BEFORE GAMEPLAY) -->
+  <!-- SCREEN 2B: FULL-PAGE GAME RULES (RIGHT BEFORE GAMEPLAY) -->
   <div id="rulesScreen" class="hidden w-full max-w-6xl mx-auto my-auto p-2 md:p-6 flex-1 flex flex-col justify-center">
     <div class="bgss-card p-8 md:p-12 space-y-8 text-center flex-1 flex flex-col justify-between">
       <div>
@@ -106,7 +106,7 @@
         <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Game Rules</p>
       </div>
 
-      <!-- Large Presenter Rule Cards -->
+      <!-- Presenter Rule Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto text-left">
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">1</span>
@@ -120,7 +120,7 @@
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">2</span>
           <div>
             <h3 class="text-xl font-black text-pink-900 mb-1">Don't Overbid!</h3>
-            <p class="text-base text-gray-700 font-medium">Bidding even <strong>$0.01 higher</strong> than the actual price earns <strong>0 points</strong>!</p>
+            <p class="text-base text-gray-700 font-medium">Bidding even <strong>$0.01 higher</strong> than actual price earns <strong>0 points</strong>!</p>
           </div>
         </div>
 
@@ -149,7 +149,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE (WITH 30-SECOND TIMER) -->
+  <!-- SCREEN 3: HOST GAME STAGE -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="bgss-card p-6 md:p-8">
       <div class="flex flex-col md:flex-row gap-6 items-center">
@@ -168,7 +168,6 @@
         </div>
       </div>
 
-      <!-- Live Guesses Counter & Manual Lock Button -->
       <div class="mt-8 bg-pink-50 border-2 border-pink-200 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-center md:text-left">
           <span class="text-xs font-bold text-pink-800 uppercase tracking-wider block">Live Submissions</span>
@@ -348,6 +347,22 @@
     let cumulativeScores = {};
     let timerInterval = null;
 
+    // Common profanity list for nickname filtering
+    const profanityList = [
+      "fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "pussy", 
+      "cock", "whore", "slut", "piss", "nigger", "faggot", "lanjiao", "ccb", 
+      "cb", "puki", "kanina", "knn", "ccb", "chao chee bye"
+    ];
+
+    function censorNickname(name) {
+      let cleaned = name;
+      profanityList.forEach(word => {
+        const regex = new RegExp(`\\b${word}\\b|${word}`, "gi");
+        cleaned = cleaned.replace(regex, "***");
+      });
+      return cleaned;
+    }
+
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const pinParam = urlParams.get('pin');
@@ -446,7 +461,6 @@
         document.getElementById('timerDisplay').innerText = timeLeft;
         if (timeLeft <= 0) {
           clearInterval(timerInterval);
-          // Lock player inputs via Firebase flag
           db.ref(`games/${currentGamePin}/state/timeExpired`).set(true);
         }
       }, 1000);
@@ -487,8 +501,9 @@
         let roundResults = [];
 
         validGuesses.forEach((vg) => {
+          // REFINED: Linear scaling for a more forgiving score distribution
           let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
-          let totalRoundPts = Math.round(1000 * Math.pow(accuracyRatio, 3));
+          let totalRoundPts = Math.round(1000 * accuracyRatio);
 
           cumulativeScores[vg.name] = (cumulativeScores[vg.name] || 0) + totalRoundPts;
 
@@ -603,13 +618,16 @@
 
     function joinGame() {
       const pin = document.getElementById('inputPin').value.trim();
-      const nickname = document.getElementById('inputNickname').value.trim();
+      let rawNickname = document.getElementById('inputNickname').value.trim();
       const btn = document.getElementById('enterBtn');
 
-      if (!pin || !nickname) {
+      if (!pin || !rawNickname) {
         alert("Please enter both PIN and Nickname");
         return;
       }
+
+      // Automatically censor profane nicknames
+      const nickname = censorNickname(rawNickname);
 
       btn.disabled = true;
       btn.innerText = "CONNECTING...";
