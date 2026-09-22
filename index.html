@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Price Is Right - FairPrice Live Edition</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Firebase Compatibility SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #46178f;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    .kahoot-card {
+      background: rgba(255, 255, 255, 0.95);
+      color: #333333;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .pulse-btn {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body class="flex flex-col justify-between min-h-screen p-4">
+
+  <!-- Header Bar -->
+  <header class="flex justify-between items-center bg-purple-900/80 backdrop-blur p-4 rounded-xl mb-4 border border-purple-500/30">
+    <div class="flex items-center space-x-3">
+      <span class="text-3xl">🛒</span>
+      <div>
+        <h1 class="text-xl md:text-2xl font-black tracking-wider text-yellow-400">THE PRICE IS RIGHT</h1>
+        <p class="text-xs text-purple-200">NTUC FairPrice Live Edition</p>
+      </div>
+    </div>
+    <div id="pinDisplay" class="hidden text-right">
+      <span class="text-xs uppercase text-purple-300 font-bold tracking-widest block">Game PIN</span>
+      <span id="pinValue" class="text-2xl md:text-3xl font-black text-yellow-300 tracking-wider">----</span>
+    </div>
+  </header>
+
+  <!-- SCREEN 1: ROLE SELECTION -->
+  <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
+    <div class="kahoot-card p-8">
+      <h2 class="text-2xl font-extrabold mb-6 text-purple-900">Choose Your Mode</h2>
+      <div class="space-y-4">
+        <button onclick="initHost()" class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+          <i class="fa-solid fa-desktop mr-2"></i> HOST GAME (Projector)
+        </button>
+        <button onclick="initPlayer()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-purple-950 font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+          <i class="fa-solid fa-mobile-screen mr-2"></i> JOIN GAME (Phone)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: HOST LOBBY -->
+  <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="kahoot-card p-6 md:p-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+        <div class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl">
+          <p class="text-sm font-bold text-purple-800 mb-2">Scan QR Code on Phone to Join:</p>
+          <img id="qrCodeImg" class="w-56 h-56 rounded-lg shadow border-4 border-white" src="" alt="QR Code">
+          <p class="text-xs font-semibold text-gray-500 mt-2">or visit this URL and enter PIN</p>
+        </div>
+        <div class="space-y-4 text-left">
+          <div class="bg-purple-100 p-4 rounded-xl border border-purple-200">
+            <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Players Joined</span>
+            <div class="text-5xl font-black text-purple-900 mt-1" id="lobbyPlayerCount">0</div>
+          </div>
+          <p class="text-xs text-gray-500">Wait for participants to join before starting.</p>
+          <button onclick="startGame()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black text-xl rounded-xl shadow-lg pulse-btn">
+            <i class="fa-solid fa-play mr-2"></i> START GAME NOW
+          </button>
+        </div>
+      </div>
+      <hr class="my-6 border-gray-200">
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 text-left">Live Player Roster</h3>
+      <div id="playerList" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2"></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: HOST GAME STAGE -->
+  <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
+    <div class="kahoot-card p-6 md:p-8">
+      <div class="flex flex-col md:flex-row gap-6 items-center">
+        <div id="itemIcon" class="text-7xl p-6 bg-purple-100 rounded-2xl border-2 border-purple-200 flex items-center justify-center">
+          🍌
+        </div>
+        <div class="flex-1 space-y-2 text-center md:text-left">
+          <span id="itemCategory" class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Category</span>
+          <h2 id="itemName" class="text-2xl md:text-3xl font-black text-gray-900">Item Name</h2>
+          <p id="itemDesc" class="text-sm text-gray-600">Short description of the NTUC FairPrice product.</p>
+        </div>
+        <div class="bg-purple-900 text-white p-4 rounded-xl text-center min-w-[120px]">
+          <span class="text-xs text-purple-300 block font-bold uppercase">Time Left</span>
+          <span id="timerDisplay" class="text-4xl font-black text-yellow-400">20</span>
+        </div>
+      </div>
+
+      <div class="mt-8 bg-gray-100 p-4 rounded-xl flex justify-between items-center">
+        <div class="text-sm font-bold text-gray-700">
+          Guesses Received: <span id="submittedCount" class="text-purple-700 text-lg">0</span> / <span id="totalPlayersCount">0</span>
+        </div>
+        <button onclick="revealAnswer()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow text-sm">
+          <i class="fa-solid fa-eye mr-1"></i> Lock & Reveal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: HOST REVEAL & LEADERBOARD -->
+  <div id="hostRevealScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="kahoot-card p-6 md:p-8 space-y-6">
+      <div class="bg-yellow-400 text-purple-950 p-6 rounded-2xl shadow-inner">
+        <span class="text-xs font-extrabold uppercase tracking-widest block opacity-75">Actual NTUC FairPrice Price</span>
+        <div id="actualPriceDisplay" class="text-5xl md:text-6xl font-black mt-1">$0.00</div>
+      </div>
+
+      <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Top Leaderboard</h3>
+      <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto text-left"></div>
+
+      <div class="flex gap-4 pt-4">
+        <button onclick="nextQuestion()" class="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white font-black text-lg rounded-xl shadow-lg">
+          Next Item <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: PLAYER JOIN FORM -->
+  <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
+    <div class="kahoot-card p-6 text-center space-y-4">
+      <h2 class="text-2xl font-black text-purple-900">Join the Game</h2>
+      <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-purple-600">
+      <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-purple-600">
+      <button id="enterGameBtn" onclick="joinGame()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-purple-950 font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+        ENTER GAME
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN 6: PLAYER WAITING ROOM -->
+  <div id="playerWaitingScreen" class="hidden max-w-md mx-auto my-auto w-full text-center space-y-4">
+    <div class="kahoot-card p-8 space-y-4">
+      <div class="text-5xl animate-bounce">🎉</div>
+      <h2 class="text-2xl font-black text-purple-900">You're In!</h2>
+      <p class="text-sm text-gray-600">See your name on the main projector screen. Game starting soon!</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: PLAYER GUESS INPUT -->
+  <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
+    <div class="kahoot-card p-6 text-center space-y-6">
+      <div>
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Submit Your Price Guess</span>
+        <h3 id="playerItemTitle" class="text-lg font-bold text-purple-900">Item Name</h3>
+      </div>
+      
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-black text-gray-400">$</span>
+        <input id="playerGuessInput" type="number" step="0.01" placeholder="0.00" class="w-full pl-12 pr-4 py-4 text-4xl font-black text-purple-950 border-4 border-purple-300 rounded-2xl text-center focus:outline-none focus:border-purple-600">
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="addGuess(1)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $1</button>
+        <button onclick="addGuess(5)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $5</button>
+        <button onclick="addGuess(10)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $10</button>
+      </div>
+
+      <button id="submitGuessBtn" onclick="submitGuess()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black text-xl rounded-xl shadow-lg">
+        SUBMIT GUESS
+      </button>
+    </div>
+  </div>
+
+  <!-- SCREEN 8: PLAYER GUESS LOCKED -->
+  <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
+    <div class="kahoot-card p-8 space-y-4">
+      <div class="text-5xl text-green-500"><i class="fa-solid fa-circle-check"></i></div>
+      <h2 class="text-2xl font-black text-purple-900">Guess Locked!</h2>
+      <p class="text-xl font-bold text-yellow-600" id="lockedGuessDisplay">$0.00</p>
+      <p class="text-xs text-gray-500">Look up at the main screen for results!</p>
+    </div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBaJRejECntNcDjQ0MCaCJflxzd9hp8lkU",
+      authDomain: "price-is-right-b3eba.firebaseapp.com",
+      databaseURL: "https://price-is-right-b3eba-default-rtdb.firebaseio.com",
+      projectId: "price-is-right-b3eba",
+      storageBucket: "price-is-right-b3eba.firebasestorage.app",
+      messagingSenderId: "716413846286",
+      appId: "1:716413846286:web:eec1a6d1f9e5254e6b0d5f"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const itemsDeck = [
+      { name: "Sumifru Philippines Bananas (700g)", price: 2.55, icon: "🍌", category: "Fresh Produce", desc: "Fresh high-land bananas imported from Philippines." },
+      { name: "Sunshine Enriched Softwhite Bread (400g)", price: 2.80, icon: "🍞", category: "Bakery", desc: "Classic white loaf enriched with vitamins and minerals." },
+      { name: "Meiji Pasteurized Fresh Milk (946ml)", price: 3.63, icon: "🥛", category: "Dairy", desc: "100% Pure fresh milk pasteurized for freshness." },
+      { name: "FairPrice 3-ply Facial Tissue (4 x 130s)", price: 4.80, icon: "🧻", category: "Household", desc: "Soft 100% virgin pulp 3-ply facial tissue." },
+      { name: "FairPrice Premium Kitchen Towels (8 rolls)", price: 5.85, icon: "🧻", category: "Household", desc: "Highly absorbent paper kitchen towels." },
+      { name: "Scott Extra Toilet Tissue (10 rolls)", price: 7.95, icon: "🧻", category: "Household", desc: "Extra soft, strong toilet tissue rolls." },
+      { name: "Milo UHT Packet Drink (24 x 200ml Carton)", price: 14.95, icon: "🧃", category: "Beverages", desc: "Carton pack of malt chocolate drinks." },
+      { name: "Ben & Jerry's Ice Cream Pint (473ml)", price: 15.18, icon: "🍦", category: "Frozen Treats", desc: "Premium ice cream pint in assorted flavors." },
+      { name: "SongHe AAA Thai Hom Mali Rice (5kg)", price: 16.20, icon: "🍚", category: "Pantry Staples", desc: "Fragrant premium grade AAA Thai jasmine rice." },
+      { name: "Dyson V8 Slim Fluffy Cordless Vacuum", price: 509.00, icon: "🧹", category: "Electronics", desc: "Lightweight cordless vacuum with powerful suction." }
+    ];
+
+    let currentGamePin = null;
+    let playerKey = null;
+    let timerInterval = null;
+    let currentItemIndex = 0;
+
+    window.onload = () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const pinParam = urlParams.get('pin');
+      if (pinParam) {
+        document.getElementById('inputPin').value = pinParam;
+        initPlayer();
+      }
+    };
+
+    function hideAllScreens() {
+      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen'];
+      screens.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+      });
+    }
+
+    // --- HOST LOGIC ---
+    function initHost() {
+      hideAllScreens();
+      currentGamePin = Math.floor(1000 + Math.random() * 9000).toString();
+      document.getElementById('pinDisplay').classList.remove('hidden');
+      document.getElementById('pinValue').innerText = currentGamePin;
+
+      const currentUrl = window.location.href.split('?')[0];
+      const joinUrl = `${currentUrl}?pin=${currentGamePin}`;
+      document.getElementById('qrCodeImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(joinUrl)}`;
+
+      document.getElementById('hostLobbyScreen').classList.remove('hidden');
+
+      // Sync player joins live from Firebase
+      db.ref(`games/${currentGamePin}/players`).on('value', snapshot => {
+        const players = snapshot.val() || {};
+        const playerList = document.getElementById('playerList');
+        playerList.innerHTML = '';
+        let count = 0;
+
+        Object.values(players).forEach(p => {
+          count++;
+          const badge = document.createElement('span');
+          badge.className = 'px-3 py-1 bg-purple-100 text-purple-900 text-xs font-extrabold rounded-full shadow-sm';
+          badge.innerText = p.name;
+          playerList.appendChild(badge);
+        });
+
+        document.getElementById('lobbyPlayerCount').innerText = count;
+        document.getElementById('totalPlayersCount').innerText = count;
+      });
+
+      db.ref(`games/${currentGamePin}/state`).set({ status: 'lobby' });
+    }
+
+    function startGame() {
+      currentItemIndex = 0;
+      loadItemStage(currentItemIndex);
+    }
+
+    function loadItemStage(index) {
+      hideAllScreens();
+      document.getElementById('hostGameScreen').classList.remove('hidden');
+
+      const item = itemsDeck[index];
+      document.getElementById('itemIcon').innerText = item.icon;
+      document.getElementById('itemName').innerText = item.name;
+      document.getElementById('itemCategory').innerText = item.category;
+      document.getElementById('itemDesc').innerText = item.desc;
+
+      db.ref(`games/${currentGamePin}/guesses`).remove();
+
+      db.ref(`games/${currentGamePin}/state`).set({
+        status: 'guessing',
+        currentIndex: index,
+        itemName: item.name
+      });
+
+      db.ref(`games/${currentGamePin}/guesses`).on('value', snapshot => {
+        const guesses = snapshot.val() || {};
+        document.getElementById('submittedCount').innerText = Object.keys(guesses).length;
+      });
+
+      let timeLeft = 20;
+      document.getElementById('timerDisplay').innerText = timeLeft;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          revealAnswer();
+        }
+      }, 1000);
+    }
+
+    function revealAnswer() {
+      clearInterval(timerInterval);
+      hideAllScreens();
+      document.getElementById('hostRevealScreen').classList.remove('hidden');
+
+      const item = itemsDeck[currentItemIndex];
+      document.getElementById('actualPriceDisplay').innerText = `$${item.price.toFixed(2)}`;
+
+      db.ref(`games/${currentGamePin}`).once('value', snapshot => {
+        const data = snapshot.val() || {};
+        const players = data.players || {};
+        const guesses = data.guesses || {};
+
+        const scores = [];
+        Object.keys(players).forEach(pKey => {
+          const playerName = players[pKey].name;
+          const guessVal = guesses[pKey] !== undefined ? parseFloat(guesses[pKey]) : null;
+          let diff = guessVal !== null ? Math.abs(item.price - guessVal) : 999;
+          let points = guessVal !== null ? Math.max(0, Math.round(1000 - diff * 20)) : 0;
+          if (guessVal === item.price) points += 1000;
+
+          scores.push({ name: playerName, guess: guessVal, diff: diff, points: points });
+        });
+
+        scores.sort((a, b) => b.points - a.points);
+
+        const lbList = document.getElementById('leaderboardList');
+        lbList.innerHTML = '';
+        scores.forEach((s, idx) => {
+          const row = document.createElement('div');
+          row.className = 'flex justify-between items-center p-3 bg-purple-50 rounded-xl border border-purple-100';
+          row.innerHTML = `
+            <div class="flex items-center space-x-3">
+              <span class="w-6 text-center font-black text-purple-800">#${idx + 1}</span>
+              <span class="font-bold text-gray-800">${s.name}</span>
+            </div>
+            <div class="text-right">
+              <span class="text-xs text-gray-500 font-semibold block">Guess: ${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
+              <span class="text-sm font-black text-purple-900">+${s.points} pts</span>
+            </div>
+          `;
+          lbList.appendChild(row);
+        });
+
+        try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
+
+        db.ref(`games/${currentGamePin}/state`).set({
+          status: 'revealed',
+          actualPrice: item.price
+        });
+      });
+    }
+
+    function nextQuestion() {
+      currentItemIndex++;
+      if (currentItemIndex < itemsDeck.length) {
+        loadItemStage(currentItemIndex);
+      } else {
+        alert("Game Over! Thank you for playing.");
+        location.reload();
+      }
+    }
+
+    // --- PLAYER LOGIC ---
+    function initPlayer() {
+      hideAllScreens();
+      document.getElementById('playerJoinScreen').classList.remove('hidden');
+    }
+
+    function joinGame() {
+      const pin = document.getElementById('inputPin').value.trim();
+      const nickname = document.getElementById('inputNickname').value.trim();
+      const btn = document.getElementById('enterGameBtn');
+
+      if (!pin || !nickname) {
+        alert("Please enter both PIN and Nickname");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerText = "CONNECTING...";
+
+      currentGamePin = pin;
+      playerKey = 'player_' + Math.random().toString(36).substr(2, 9);
+
+      db.ref(`games/${pin}/players/${playerKey}`).set({
+        name: nickname
+      }).then(() => {
+        hideAllScreens();
+        document.getElementById('playerWaitingScreen').classList.remove('hidden');
+        listenToGameState();
+      }).catch(err => {
+        btn.disabled = false;
+        btn.innerText = "ENTER GAME";
+        alert("Firebase Error: " + err.message + "\n\nDid you enable Realtime Database and set rules to read: true, write: true?");
+      });
+    }
+
+    function listenToGameState() {
+      db.ref(`games/${currentGamePin}/state`).on('value', snapshot => {
+        const state = snapshot.val();
+        if (!state) return;
+
+        if (state.status === 'guessing') {
+          hideAllScreens();
+          document.getElementById('playerInputScreen').classList.remove('hidden');
+          document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
+          document.getElementById('playerGuessInput').value = '';
+          document.getElementById('submitGuessBtn').disabled = false;
+        }
+      });
+    }
+
+    function addGuess(val) {
+      const input = document.getElementById('playerGuessInput');
+      let curr = parseFloat(input.value) || 0;
+      input.value = (curr + val).toFixed(2);
+    }
+
+    function submitGuess() {
+      const guessVal = parseFloat(document.getElementById('playerGuessInput').value);
+      if (isNaN(guessVal) || guessVal < 0) {
+        alert("Please enter a valid price guess.");
+        return;
+      }
+
+      db.ref(`games/${currentGamePin}/guesses/${playerKey}`).set(guessVal.toFixed(2)).then(() => {
+        hideAllScreens();
+        document.getElementById('playerLockedScreen').classList.remove('hidden');
+        document.getElementById('lockedGuessDisplay').innerText = `$${guessVal.toFixed(2)}`;
+      });
+    }
+  </script>
+</body>
+</html>
