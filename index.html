@@ -346,6 +346,7 @@
     let currentItemIndex = 0;
     let cumulativeScores = {};
     let timerInterval = null;
+    let hasSubmittedCurrentRound = false;
 
     // Common profanity list for nickname filtering
     const profanityList = [
@@ -501,7 +502,6 @@
         let roundResults = [];
 
         validGuesses.forEach((vg) => {
-          // REFINED: Linear scaling for a more forgiving score distribution
           let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
           let totalRoundPts = Math.round(1000 * accuracyRatio);
 
@@ -626,7 +626,6 @@
         return;
       }
 
-      // Automatically censor profane nicknames
       const nickname = censorNickname(rawNickname);
 
       btn.disabled = true;
@@ -648,25 +647,35 @@
       });
     }
 
+    let lastRoundIndex = -1;
+
     function listenToGameState() {
       db.ref(`games/${currentGamePin}/state`).on('value', snapshot => {
         const state = snapshot.val();
         if (!state) return;
 
         if (state.status === 'guessing') {
-          hideAllScreens();
-          document.getElementById('playerInputScreen').classList.remove('hidden');
-          document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
-          document.getElementById('playerGuessInput').value = '';
-          document.getElementById('submitGuessBtn').disabled = false;
+          // Reset submission flag when a new question starts
+          if (lastRoundIndex !== state.currentIndex) {
+            lastRoundIndex = state.currentIndex;
+            hasSubmittedCurrentRound = false;
+          }
 
-          if (state.timeExpired) {
-            document.getElementById('submitGuessBtn').disabled = true;
-            hideAllScreens();
-            document.getElementById('playerLockedScreen').classList.remove('hidden');
-            document.getElementById('lockedHeader').innerText = "Time's Up!";
-            document.getElementById('lockedGuessDisplay').innerText = "No Submission";
-            document.getElementById('lockedSubtext').innerText = "30-second time limit expired before guess was submitted.";
+          // Only render input screen or time's up screen if player hasn't submitted yet
+          if (!hasSubmittedCurrentRound) {
+            if (state.timeExpired) {
+              hideAllScreens();
+              document.getElementById('playerLockedScreen').classList.remove('hidden');
+              document.getElementById('lockedHeader').innerText = "Time's Up!";
+              document.getElementById('lockedGuessDisplay').innerText = "No Submission";
+              document.getElementById('lockedSubtext').innerText = "30-second time limit expired before guess was submitted.";
+            } else {
+              hideAllScreens();
+              document.getElementById('playerInputScreen').classList.remove('hidden');
+              document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
+              document.getElementById('playerGuessInput').value = '';
+              document.getElementById('submitGuessBtn').disabled = false;
+            }
           }
         } else if (state.status === 'gameover') {
           hideAllScreens();
@@ -689,6 +698,7 @@
       }
 
       db.ref(`games/${currentGamePin}/guesses/${playerKey}`).set(guessVal.toFixed(2)).then(() => {
+        hasSubmittedCurrentRound = true;
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
         document.getElementById('lockedHeader').innerText = "Guess Locked!";
