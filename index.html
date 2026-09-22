@@ -97,7 +97,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE -->
+  <!-- SCREEN 3: HOST GAME STAGE (WITH 1-MINUTE TIMER) -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="kahoot-card p-6 md:p-8">
       <div class="flex flex-col md:flex-row gap-6 items-center">
@@ -109,6 +109,10 @@
           <h2 id="itemName" class="text-2xl md:text-3xl font-black text-gray-900">Item Name</h2>
           <p id="itemDesc" class="text-sm text-gray-600">Description</p>
           <p id="itemSource" class="text-xs font-bold text-purple-700 bg-purple-100 inline-block px-2 py-1 rounded">Source: NTUC FairPrice (as of 22 Sep 2026)</p>
+        </div>
+        <div class="bg-purple-900 text-white p-4 rounded-2xl text-center min-w-[120px] shadow-lg shrink-0">
+          <span class="text-xs text-purple-300 block font-bold uppercase tracking-wider">Time Left</span>
+          <span id="timerDisplay" class="text-4xl font-black text-yellow-400">60</span>
         </div>
       </div>
 
@@ -153,7 +157,7 @@
   <div id="hostFinalScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="kahoot-card p-6 md:p-8 space-y-6">
       <div class="text-6xl">🏆</div>
-      <h2 class="text-3xl font-black text-purple-900">BGSS EDITION CHAMPIONS</h2>
+      <h2 class="text-3xl font-black text-purple-900">BGSS Champions:</h2>
       <p class="text-sm text-gray-500">Overall Standings Across All 5 Rounds</p>
 
       <div id="finalLeaderboardList" class="space-y-2 max-h-80 overflow-y-auto text-left"></div>
@@ -214,9 +218,18 @@
   <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
     <div class="kahoot-card p-8 space-y-4">
       <div class="text-5xl text-green-500"><i class="fa-solid fa-circle-check"></i></div>
-      <h2 class="text-2xl font-black text-purple-900">Guess Locked!</h2>
+      <h2 id="lockedHeader" class="text-2xl font-black text-purple-900">Guess Locked!</h2>
       <p class="text-xl font-bold text-yellow-600" id="lockedGuessDisplay">$0.00</p>
-      <p class="text-xs text-gray-500">Look up at the main screen for results!</p>
+      <p id="lockedSubtext" class="text-xs text-gray-500">Look up at the main screen for results!</p>
+    </div>
+  </div>
+
+  <!-- SCREEN 9: PLAYER GAME OVER SCREEN -->
+  <div id="playerGameOverScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
+    <div class="kahoot-card p-8 space-y-4">
+      <div class="text-6xl animate-bounce">🏁</div>
+      <h2 class="text-3xl font-black text-purple-900">Game Over!</h2>
+      <p class="text-lg font-bold text-yellow-600">Look up for results!</p>
     </div>
   </div>
 
@@ -281,6 +294,7 @@
     let playerKey = null;
     let currentItemIndex = 0;
     let cumulativeScores = {};
+    let timerInterval = null;
 
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -292,7 +306,7 @@
     };
 
     function hideAllScreens() {
-      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen'];
+      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerGameOverScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -357,16 +371,32 @@
       db.ref(`games/${currentGamePin}/state`).set({
         status: 'guessing',
         currentIndex: index,
-        itemName: item.name
+        itemName: item.name,
+        timeExpired: false
       });
 
       db.ref(`games/${currentGamePin}/guesses`).on('value', snapshot => {
         const guesses = snapshot.val() || {};
         document.getElementById('submittedCount').innerText = Object.keys(guesses).length;
       });
+
+      // Start 60-second host timer
+      let timeLeft = 60;
+      document.getElementById('timerDisplay').innerText = timeLeft;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          // Lock player inputs via Firebase flag
+          db.ref(`games/${currentGamePin}/state/timeExpired`).set(true);
+        }
+      }, 1000);
     }
 
     function revealAnswer() {
+      clearInterval(timerInterval);
       hideAllScreens();
       document.getElementById('hostRevealScreen').classList.remove('hidden');
 
@@ -395,13 +425,11 @@
           }
         });
 
-        // Sort valid guesses (closest under/equal to actual price wins)
         validGuesses.sort((a, b) => a.diff - b.diff);
 
         let roundResults = [];
 
         validGuesses.forEach((vg) => {
-          // Pure Proximity Score (0 to 1000 points based on percentage distance)
           let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
           let totalRoundPts = Math.round(1000 * Math.pow(accuracyRatio, 3));
 
@@ -426,7 +454,6 @@
           });
         });
 
-        // Render leaderboard
         const lbList = document.getElementById('leaderboardList');
         lbList.innerHTML = '';
         roundResults.forEach((s, idx) => {
@@ -477,6 +504,10 @@
     function showFinalLeaderboard() {
       hideAllScreens();
       document.getElementById('hostFinalScreen').classList.remove('hidden');
+
+      db.ref(`games/${currentGamePin}/state`).set({
+        status: 'gameover'
+      });
 
       const finalRankings = Object.keys(cumulativeScores).map(name => ({
         name: name,
@@ -553,6 +584,19 @@
           document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
           document.getElementById('playerGuessInput').value = '';
           document.getElementById('submitGuessBtn').disabled = false;
+
+          // Lock if time expired before player submitted
+          if (state.timeExpired) {
+            document.getElementById('submitGuessBtn').disabled = true;
+            hideAllScreens();
+            document.getElementById('playerLockedScreen').classList.remove('hidden');
+            document.getElementById('lockedHeader').innerText = "Time's Up!";
+            document.getElementById('lockedGuessDisplay').innerText = "No Submission";
+            document.getElementById('lockedSubtext').innerText = "Time expired before guess was submitted.";
+          }
+        } else if (state.status === 'gameover') {
+          hideAllScreens();
+          document.getElementById('playerGameOverScreen').classList.remove('hidden');
         }
       });
     }
@@ -573,7 +617,9 @@
       db.ref(`games/${currentGamePin}/guesses/${playerKey}`).set(guessVal.toFixed(2)).then(() => {
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
+        document.getElementById('lockedHeader').innerText = "Guess Locked!";
         document.getElementById('lockedGuessDisplay').innerText = `$${guessVal.toFixed(2)}`;
+        document.getElementById('lockedSubtext').innerText = "Look up at the main screen for results!";
       });
     }
   </script>
