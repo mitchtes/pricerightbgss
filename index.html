@@ -96,21 +96,22 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE (NO TIMER) -->
+  <!-- SCREEN 3: HOST GAME STAGE (MANUAL HOST CONTROL) -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="kahoot-card p-6 md:p-8">
       <div class="flex flex-col md:flex-row gap-6 items-center">
-        <div class="w-48 h-48 p-2 bg-white rounded-2xl border-2 border-purple-100 flex items-center justify-center shadow-sm shrink-0">
+        <div class="w-52 h-52 p-2 bg-white rounded-2xl border-2 border-purple-100 flex items-center justify-center shadow-sm shrink-0">
           <img id="itemImg" src="" alt="Product" class="max-h-full max-w-full object-contain">
         </div>
         <div class="flex-1 space-y-2 text-center md:text-left">
           <span id="itemCategory" class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Category</span>
           <h2 id="itemName" class="text-2xl md:text-3xl font-black text-gray-900">Item Name</h2>
-          <p id="itemDesc" class="text-sm text-gray-600">Short description of the NTUC FairPrice product.</p>
+          <p id="itemDesc" class="text-sm text-gray-600">Description</p>
+          <p id="itemSource" class="text-xs font-bold text-purple-700 bg-purple-100 inline-block px-2 py-1 rounded">Source: NTUC FairPrice (as of 22 Sep 2026)</p>
         </div>
       </div>
 
-      <!-- Live Guess Submissions Progress -->
+      <!-- Live Guesses Counter & Manual Lock Button -->
       <div class="mt-8 bg-purple-50 border-2 border-purple-200 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-center md:text-left">
           <span class="text-xs font-bold text-purple-600 uppercase tracking-wider block">Live Submissions</span>
@@ -219,42 +220,42 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    // Fixed 5 Items with FairPrice Prices & Image Assets
+    // 5 Fixed FairPrice Items with scraped images & verified prices (22 Sep 2026)
     const itemsDeck = [
       { 
-        name: "Sumifru Philippines Bananas (700g)", 
-        price: 2.55, 
-        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060411.jpg", 
-        category: "Fresh Produce", 
-        desc: "Fresh high-land bananas imported from Philippines." 
+        name: "Gardenia Enriched White Bread (400g)", 
+        price: 2.50, 
+        img: "https://media.nestag.com/fairprice/product/93964_1.jpg", 
+        category: "Bakery & Breads", 
+        desc: "High in calcium & iron, enriched white bread slice." 
       },
       { 
-        name: "Meiji Pasteurized Fresh Milk - Regular (946ml)", 
-        price: 3.63, 
-        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060408.jpg", 
-        category: "Dairy & Chilled", 
-        desc: "100% Pure fresh milk pasteurized for freshness." 
+        name: "Mama Lemon Gold Dishwashing Liquid - Natural Lemon (750ml)", 
+        price: 2.86, 
+        img: "https://media.nestag.com/fairprice/product/13004491_1.jpg", 
+        category: "Household Essentials", 
+        desc: "Super degreasing formula gentle on hands." 
       },
       { 
-        name: "Milo UHT Packet Drink Less Sugar (24 x 200ml Carton)", 
-        price: 19.50, 
-        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060420.jpg", 
+        name: "Malaysia Red Seedless Watermelon (1 per pack)", 
+        price: 4.95, 
+        img: "https://media.nestag.com/fairprice/product/13288765_1.jpg", 
+        category: "Fresh Fruits", 
+        desc: "Fresh, juicy seedless red watermelon." 
+      },
+      { 
+        name: "Milo 3-in-1 Instant Chocolate Malt with Milk - Regular (15 x 27g)", 
+        price: 7.95, 
+        img: "https://media.nestag.com/fairprice/product/13058254_1.jpg", 
         category: "Beverages", 
-        desc: "Carton pack of malt chocolate drinks." 
+        desc: "Classic breakfast chocolate malt drink sticks." 
       },
       { 
-        name: "Ben & Jerry's Chocolate Fudge Brownie Pint (473ml)", 
-        price: 15.18, 
-        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060435.jpg", 
-        category: "Frozen Treats", 
-        desc: "Rich chocolate ice cream with fudgy brownie chunks." 
-      },
-      { 
-        name: "SongHe AAA Thai Hom Mali Rice (5kg)", 
-        price: 16.95, 
-        img: "https://images.deliveryhero.io/image/fd-sg/Products/5060415.jpg", 
-        category: "Pantry Staples", 
-        desc: "Fragrant premium grade AAA Thai jasmine rice." 
+        name: "Haagen-Dazs Ice Cream - Cookies & Cream (473ml)", 
+        price: 14.77, 
+        img: "https://media.nestag.com/fairprice/product/491746_1.jpg", 
+        category: "Frozen Desserts", 
+        desc: "Rich cream ice cream with dark chocolate cookie chunks." 
       }
     ];
 
@@ -323,7 +324,10 @@
       document.getElementById('hostGameScreen').classList.remove('hidden');
 
       const item = itemsDeck[index];
-      document.getElementById('itemImg').src = item.img;
+      const imgEl = document.getElementById('itemImg');
+      imgEl.src = item.img;
+      imgEl.onerror = () => { imgEl.src = 'https://via.placeholder.com/200?text=FairPrice+Item'; };
+
       document.getElementById('itemName').innerText = item.name;
       document.getElementById('itemCategory').innerText = item.category;
       document.getElementById('itemDesc').innerText = item.desc;
