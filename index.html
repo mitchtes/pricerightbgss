@@ -242,21 +242,26 @@
 
   <!-- SCREEN 7: PLAYER GUESS INPUT -->
   <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="bgss-card p-6 text-center space-y-6">
+    <div class="bgss-card p-6 text-center space-y-5">
       <div>
         <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Submit Your Price Guess</span>
         <h3 id="playerItemTitle" class="text-lg font-bold text-pink-900">Item Name</h3>
       </div>
+
+      <p class="text-xs text-pink-700 font-semibold bg-pink-50 py-1.5 px-3 rounded-lg border border-pink-100">
+        <i class="fa-solid fa-keyboard mr-1"></i> Type your price below or tap quick-add buttons
+      </p>
       
       <div class="relative">
         <span class="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-black text-gray-400">$</span>
         <input id="playerGuessInput" type="number" step="0.01" placeholder="0.00" class="w-full pl-12 pr-4 py-4 text-4xl font-black text-pink-950 border-4 border-pink-300 rounded-2xl text-center focus:outline-none focus:border-pink-600">
       </div>
 
+      <!-- Updated Denomination Buttons -->
       <div class="grid grid-cols-3 gap-2">
-        <button onclick="addGuess(1)" class="py-2 bg-pink-100 hover:bg-pink-200 text-pink-950 font-bold rounded-lg">+ $1</button>
-        <button onclick="addGuess(5)" class="py-2 bg-pink-100 hover:bg-pink-200 text-pink-950 font-bold rounded-lg">+ $5</button>
-        <button onclick="addGuess(10)" class="py-2 bg-pink-100 hover:bg-pink-200 text-pink-950 font-bold rounded-lg">+ $10</button>
+        <button onclick="addGuess(0.01)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.01</button>
+        <button onclick="addGuess(0.10)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.10</button>
+        <button onclick="addGuess(1.00)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $1.00</button>
       </div>
 
       <button id="submitGuessBtn" onclick="submitGuess()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-xl rounded-xl shadow-lg">
@@ -275,12 +280,36 @@
     </div>
   </div>
 
+  <!-- SCREEN 8B: PLAYER ROUND RESULT & LEADERBOARD POSITION -->
+  <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
+    <div class="bgss-card p-8 space-y-5">
+      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Round Results</span>
+      <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
+        <span class="text-xs text-gray-500 font-bold uppercase block">Your Current Rank</span>
+        <div id="playerRankDisplay" class="text-5xl font-black text-pink-950 mt-1">#-</div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+          <span class="text-xs text-gray-500 block font-bold">Round Score</span>
+          <span id="playerRoundPts" class="text-xl font-black text-pink-900">+0 pts</span>
+        </div>
+        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
+          <span class="text-xs text-gray-500 block font-bold">Total Score</span>
+          <span id="playerTotalPts" class="text-xl font-black text-gray-900">0 pts</span>
+        </div>
+      </div>
+
+      <p id="playerResultNotice" class="text-xs font-bold text-pink-700"></p>
+    </div>
+  </div>
+
   <!-- SCREEN 9: PLAYER GAME OVER SCREEN -->
   <div id="playerGameOverScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
     <div class="bgss-card p-8 space-y-4">
       <div class="text-6xl animate-bounce">🏁</div>
       <h2 class="text-3xl font-black text-pink-900">Game Over!</h2>
-      <p class="text-lg font-bold text-pink-700">Look up for results!</p>
+      <p class="text-lg font-bold text-pink-700">Look up at the main screen for the winners!</p>
     </div>
   </div>
 
@@ -374,7 +403,7 @@
     };
 
     function hideAllScreens() {
-      const screens = ['roleScreen', 'rulesScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerGameOverScreen'];
+      const screens = ['roleScreen', 'rulesScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerRoundResultScreen', 'playerGameOverScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -488,9 +517,9 @@
           const guessVal = guesses[pKey] !== undefined ? parseFloat(guesses[pKey]) : null;
 
           if (guessVal === null) {
-            overbids.push({ name: playerName, guess: null, points: 0, reason: "No Guess" });
+            overbids.push({ key: pKey, name: playerName, guess: null, points: 0, reason: "No Guess" });
           } else if (guessVal > item.price) {
-            overbids.push({ name: playerName, guess: guessVal, points: 0, reason: "OVERBID ($" + guessVal.toFixed(2) + ")" });
+            overbids.push({ key: pKey, name: playerName, guess: guessVal, points: 0, reason: "OVERBID ($" + guessVal.toFixed(2) + ")" });
           } else {
             let diff = Math.abs(item.price - guessVal);
             validGuesses.push({ key: pKey, name: playerName, guess: guessVal, diff: diff });
@@ -508,6 +537,7 @@
           cumulativeScores[vg.name] = (cumulativeScores[vg.name] || 0) + totalRoundPts;
 
           roundResults.push({
+            key: vg.key,
             name: vg.name,
             guess: vg.guess,
             points: totalRoundPts,
@@ -518,6 +548,7 @@
         overbids.forEach(ob => {
           cumulativeScores[ob.name] = (cumulativeScores[ob.name] || 0);
           roundResults.push({
+            key: ob.key,
             name: ob.name,
             guess: ob.guess,
             points: 0,
@@ -526,9 +557,21 @@
           });
         });
 
+        // Sort overall results by total score to calculate exact ranks
+        roundResults.sort((a, b) => b.total - a.total);
+
         const lbList = document.getElementById('leaderboardList');
         lbList.innerHTML = '';
+        let playerRankMap = {};
+
         roundResults.forEach((s, idx) => {
+          playerRankMap[s.key] = {
+            rank: idx + 1,
+            points: s.points,
+            total: s.total,
+            reason: s.reason || null
+          };
+
           const row = document.createElement('div');
           const isOverbid = s.points === 0 && s.reason;
           row.className = `flex justify-between items-center p-3 rounded-xl border ${isOverbid ? 'bg-red-50 border-red-200' : 'bg-pink-50 border-pink-100'}`;
@@ -557,9 +600,11 @@
 
         try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
 
+        // Publish round state with player position data to Firebase
         db.ref(`games/${currentGamePin}/state`).set({
           status: 'revealed',
-          actualPrice: item.price
+          actualPrice: item.price,
+          ranks: playerRankMap
         });
       });
     }
@@ -661,7 +706,6 @@
             hasSubmittedCurrentRound = false;
           }
 
-          // Only render input screen or time's up screen if player hasn't submitted yet
           if (!hasSubmittedCurrentRound) {
             if (state.timeExpired) {
               hideAllScreens();
@@ -675,6 +719,26 @@
               document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
               document.getElementById('playerGuessInput').value = '';
               document.getElementById('submitGuessBtn').disabled = false;
+            }
+          }
+        } else if (state.status === 'revealed') {
+          // Display personalized rank and scores to individual player
+          hideAllScreens();
+          document.getElementById('playerRoundResultScreen').classList.remove('hidden');
+          
+          if (state.ranks && state.ranks[playerKey]) {
+            const myData = state.ranks[playerKey];
+            document.getElementById('playerRankDisplay').innerText = `#${myData.rank}`;
+            document.getElementById('playerRoundPts').innerText = `+${myData.points} pts`;
+            document.getElementById('playerTotalPts').innerText = `${myData.total} pts`;
+
+            const noticeEl = document.getElementById('playerResultNotice');
+            if (myData.reason === "No Guess") {
+              noticeEl.innerText = "⚠️ No guess was submitted for this item.";
+            } else if (myData.reason && myData.reason.includes("OVERBID")) {
+              noticeEl.innerText = "⚠️ Overbid! You exceeded the price and earned 0 points.";
+            } else {
+              noticeEl.innerText = "🎉 Great guess! Points added to your total.";
             }
           }
         } else if (state.status === 'gameover') {
