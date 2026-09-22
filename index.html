@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Price Is Right - FairPrice Live Edition</title>
+  <title>The Price Is Right - BGSS Edition</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Standard Firebase Compatibility SDKs -->
@@ -43,10 +43,10 @@
   <!-- Header Bar -->
   <header class="flex justify-between items-center bg-purple-900/80 backdrop-blur p-4 rounded-xl mb-4 border border-purple-500/30">
     <div class="flex items-center space-x-3">
-      <span class="text-3xl">🛒</span>
+      <span class="text-3xl">🏷️</span>
       <div>
         <h1 class="text-xl md:text-2xl font-black tracking-wider text-yellow-400">THE PRICE IS RIGHT</h1>
-        <p class="text-xs text-purple-200">NTUC FairPrice Live Edition</p>
+        <p class="text-xs text-purple-200">BGSS Edition</p>
       </div>
     </div>
     <div id="pinDisplay" class="hidden text-right">
@@ -58,7 +58,8 @@
   <!-- SCREEN 1: ROLE SELECTION -->
   <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
     <div class="kahoot-card p-8">
-      <h2 class="text-2xl font-extrabold mb-6 text-purple-900">Choose Your Mode</h2>
+      <h2 class="text-2xl font-extrabold mb-2 text-purple-900">BGSS Edition</h2>
+      <p class="text-xs text-gray-500 mb-6">Interactive Price Guessing Competition</p>
       <div class="space-y-4">
         <button onclick="initHost()" class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
           <i class="fa-solid fa-desktop mr-2"></i> HOST GAME (Projector)
@@ -84,7 +85,7 @@
             <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Players Joined</span>
             <div class="text-5xl font-black text-purple-900 mt-1" id="lobbyPlayerCount">0</div>
           </div>
-          <p class="text-xs text-gray-500">Wait for participants to join before starting.</p>
+          <p class="text-xs text-gray-500">Wait for all participants to join before starting.</p>
           <button onclick="startGame()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black text-xl rounded-xl shadow-lg pulse-btn">
             <i class="fa-solid fa-play mr-2"></i> START GAME NOW
           </button>
@@ -96,7 +97,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE (MANUAL HOST CONTROL) -->
+  <!-- SCREEN 3: HOST GAME STAGE -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="kahoot-card p-6 md:p-8">
       <div class="flex flex-col md:flex-row gap-6 items-center">
@@ -126,7 +127,7 @@
     </div>
   </div>
 
-  <!-- SCREEN 4: HOST REVEAL & LEADERBOARD -->
+  <!-- SCREEN 4: HOST REVEAL & ROUND LEADERBOARD -->
   <div id="hostRevealScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="kahoot-card p-6 md:p-8 space-y-6">
       <div class="bg-yellow-400 text-purple-950 p-6 rounded-2xl shadow-inner">
@@ -134,21 +135,39 @@
         <div id="actualPriceDisplay" class="text-5xl md:text-6xl font-black mt-1">$0.00</div>
       </div>
 
-      <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Top Leaderboard</h3>
+      <div class="flex justify-between items-center">
+        <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Round Leaderboard</h3>
+        <span class="text-xs text-red-500 font-bold">*Overbids get 0 pts</span>
+      </div>
       <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto text-left"></div>
 
       <div class="flex gap-4 pt-4">
-        <button onclick="nextQuestion()" class="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white font-black text-lg rounded-xl shadow-lg">
+        <button id="nextBtn" onclick="nextQuestion()" class="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white font-black text-lg rounded-xl shadow-lg">
           Next Item <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- SCREEN 4B: GRAND FINAL LEADERBOARD -->
+  <div id="hostFinalScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="kahoot-card p-6 md:p-8 space-y-6">
+      <div class="text-6xl">🏆</div>
+      <h2 class="text-3xl font-black text-purple-900">BGSS EDITION CHAMPIONS</h2>
+      <p class="text-sm text-gray-500">Overall Standings Across All 5 Rounds</p>
+
+      <div id="finalLeaderboardList" class="space-y-2 max-h-80 overflow-y-auto text-left"></div>
+
+      <button onclick="location.reload()" class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg rounded-xl shadow-lg">
+        PLAY AGAIN
+      </button>
+    </div>
+  </div>
+
   <!-- SCREEN 5: PLAYER JOIN FORM -->
   <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
     <div class="kahoot-card p-6 text-center space-y-4">
-      <h2 class="text-2xl font-black text-purple-900">Join the Game</h2>
+      <h2 class="text-2xl font-black text-purple-900">BGSS Edition</h2>
       <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-purple-600">
       <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-purple-600">
       <button id="enterBtn" onclick="joinGame()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-purple-950 font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
@@ -220,40 +239,39 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    // 5 Fixed FairPrice Items with scraped images & verified prices (22 Sep 2026)
     const itemsDeck = [
       { 
         name: "Gardenia Enriched White Bread (400g)", 
         price: 2.50, 
-        img: "https://media.nestag.com/fairprice/product/93964_1.jpg", 
+        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/93964_XL1_20240418.jpg?w=1200&q=70", 
         category: "Bakery & Breads", 
         desc: "High in calcium & iron, enriched white bread slice." 
       },
       { 
         name: "Mama Lemon Gold Dishwashing Liquid - Natural Lemon (750ml)", 
         price: 2.86, 
-        img: "https://media.nestag.com/fairprice/product/13004491_1.jpg", 
+        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13004491_LXL1_20220517.jpg?w=1200&q=70", 
         category: "Household Essentials", 
         desc: "Super degreasing formula gentle on hands." 
       },
       { 
         name: "Malaysia Red Seedless Watermelon (1 per pack)", 
         price: 4.95, 
-        img: "https://media.nestag.com/fairprice/product/13288765_1.jpg", 
+        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13288765_XL1_20260901T000616.jpg?w=1200&q=70", 
         category: "Fresh Fruits", 
         desc: "Fresh, juicy seedless red watermelon." 
       },
       { 
-        name: "Milo 3-in-1 Instant Chocolate Malt with Milk - Regular (15 x 27g)", 
+        name: "Milo 3-in-1 Instant Chocolate Malt with Milk - Regular (16 x 27g)", 
         price: 7.95, 
-        img: "https://media.nestag.com/fairprice/product/13058254_1.jpg", 
+        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13058254_XL1_20260917T000451.jpg?w=1200&q=70", 
         category: "Beverages", 
         desc: "Classic breakfast chocolate malt drink sticks." 
       },
       { 
         name: "Haagen-Dazs Ice Cream - Cookies & Cream (473ml)", 
         price: 14.77, 
-        img: "https://media.nestag.com/fairprice/product/491746_1.jpg", 
+        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/491746_XL1_20260813T000556.jpg?w=1200&q=70", 
         category: "Frozen Desserts", 
         desc: "Rich cream ice cream with dark chocolate cookie chunks." 
       }
@@ -262,6 +280,7 @@
     let currentGamePin = null;
     let playerKey = null;
     let currentItemIndex = 0;
+    let cumulativeScores = {};
 
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -273,7 +292,7 @@
     };
 
     function hideAllScreens() {
-      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen'];
+      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -316,6 +335,7 @@
 
     function startGame() {
       currentItemIndex = 0;
+      cumulativeScores = {};
       loadItemStage(currentItemIndex);
     }
 
@@ -326,7 +346,7 @@
       const item = itemsDeck[index];
       const imgEl = document.getElementById('itemImg');
       imgEl.src = item.img;
-      imgEl.onerror = () => { imgEl.src = 'https://via.placeholder.com/200?text=FairPrice+Item'; };
+      imgEl.onerror = () => { imgEl.src = 'https://via.placeholder.com/300?text=FairPrice+Product'; };
 
       document.getElementById('itemName').innerText = item.name;
       document.getElementById('itemCategory').innerText = item.category;
@@ -358,36 +378,83 @@
         const players = data.players || {};
         const guesses = data.guesses || {};
 
-        const scores = [];
+        let validGuesses = [];
+        let overbids = [];
+
         Object.keys(players).forEach(pKey => {
           const playerName = players[pKey].name;
           const guessVal = guesses[pKey] !== undefined ? parseFloat(guesses[pKey]) : null;
-          let diff = guessVal !== null ? Math.abs(item.price - guessVal) : 999;
-          let points = guessVal !== null ? Math.max(0, Math.round(1000 - diff * 20)) : 0;
-          if (guessVal === item.price) points += 1000;
 
-          scores.push({ name: playerName, guess: guessVal, diff: diff, points: points });
+          if (guessVal === null) {
+            overbids.push({ name: playerName, guess: null, points: 0, reason: "No Guess" });
+          } else if (guessVal > item.price) {
+            overbids.push({ name: playerName, guess: guessVal, points: 0, reason: "OVERBID ($" + guessVal.toFixed(2) + ")" });
+          } else {
+            let diff = Math.abs(item.price - guessVal);
+            validGuesses.push({ key: pKey, name: playerName, guess: guessVal, diff: diff });
+          }
         });
 
-        scores.sort((a, b) => b.points - a.points);
+        // Sort valid guesses (closest under/equal to actual price wins)
+        validGuesses.sort((a, b) => a.diff - b.diff);
 
+        let roundResults = [];
+
+        validGuesses.forEach((vg) => {
+          // Pure Proximity Score (0 to 1000 points based on percentage distance)
+          let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
+          let totalRoundPts = Math.round(1000 * Math.pow(accuracyRatio, 3));
+
+          cumulativeScores[vg.name] = (cumulativeScores[vg.name] || 0) + totalRoundPts;
+
+          roundResults.push({
+            name: vg.name,
+            guess: vg.guess,
+            points: totalRoundPts,
+            total: cumulativeScores[vg.name]
+          });
+        });
+
+        overbids.forEach(ob => {
+          cumulativeScores[ob.name] = (cumulativeScores[ob.name] || 0);
+          roundResults.push({
+            name: ob.name,
+            guess: ob.guess,
+            points: 0,
+            total: cumulativeScores[ob.name],
+            reason: ob.reason
+          });
+        });
+
+        // Render leaderboard
         const lbList = document.getElementById('leaderboardList');
         lbList.innerHTML = '';
-        scores.forEach((s, idx) => {
+        roundResults.forEach((s, idx) => {
           const row = document.createElement('div');
-          row.className = 'flex justify-between items-center p-3 bg-purple-50 rounded-xl border border-purple-100';
+          const isOverbid = s.points === 0 && s.reason;
+          row.className = `flex justify-between items-center p-3 rounded-xl border ${isOverbid ? 'bg-red-50 border-red-200' : 'bg-purple-50 border-purple-100'}`;
           row.innerHTML = `
             <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black text-purple-800">#${idx + 1}</span>
-              <span class="font-bold text-gray-800">${s.name}</span>
+              <span class="w-6 text-center font-black ${isOverbid ? 'text-red-400' : 'text-purple-800'}">#${idx + 1}</span>
+              <div>
+                <span class="font-bold text-gray-800 block">${s.name}</span>
+                <span class="text-xs text-gray-500">Guess: ${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
+              </div>
             </div>
             <div class="text-right">
-              <span class="text-xs text-gray-500 font-semibold block">Guess: ${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
-              <span class="text-sm font-black text-purple-900">+${s.points} pts</span>
+              <span class="text-sm font-black ${isOverbid ? 'text-red-600' : 'text-purple-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
+              <span class="text-xs text-gray-500 block">Total: ${s.total} pts</span>
             </div>
           `;
           lbList.appendChild(row);
         });
+
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentItemIndex === itemsDeck.length - 1) {
+          nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-2"></i>';
+        } else {
+          nextBtn.innerHTML = 'Next Item <i class="fa-solid fa-arrow-right ml-2"></i>';
+        }
 
         try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
 
@@ -403,9 +470,41 @@
       if (currentItemIndex < itemsDeck.length) {
         loadItemStage(currentItemIndex);
       } else {
-        alert("Game Over! Thank you for playing.");
-        location.reload();
+        showFinalLeaderboard();
       }
+    }
+
+    function showFinalLeaderboard() {
+      hideAllScreens();
+      document.getElementById('hostFinalScreen').classList.remove('hidden');
+
+      const finalRankings = Object.keys(cumulativeScores).map(name => ({
+        name: name,
+        score: cumulativeScores[name]
+      })).sort((a, b) => b.score - a.score);
+
+      const finalLb = document.getElementById('finalLeaderboardList');
+      finalLb.innerHTML = '';
+
+      finalRankings.forEach((r, idx) => {
+        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+        const cardStyle = idx === 0 ? 'bg-yellow-100 border-yellow-300' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-amber-100 border-amber-300' : 'bg-purple-50 border-purple-100';
+
+        const row = document.createElement('div');
+        row.className = `flex justify-between items-center p-4 rounded-xl border-2 ${cardStyle}`;
+        row.innerHTML = `
+          <div class="flex items-center space-x-4">
+            <span class="text-2xl font-black">${medal}</span>
+            <span class="text-lg font-black text-gray-900">${r.name}</span>
+          </div>
+          <span class="text-xl font-black text-purple-900">${r.score} PTS</span>
+        `;
+        finalLb.appendChild(row);
+      });
+
+      try {
+        confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } });
+      } catch(e){}
     }
 
     // --- PLAYER LOGIC ---
