@@ -182,21 +182,40 @@
     </div>
   </div>
 
-  <!-- SCREEN 4: HOST REVEAL & ROUND LEADERBOARD -->
-  <div id="hostRevealScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+  <!-- SCREEN 4: HOST REVEAL & DUAL-COLUMN LEADERBOARD -->
+  <div id="hostRevealScreen" class="hidden max-w-6xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="bgss-card p-6 md:p-8 space-y-6">
       <div class="bg-pink-600 text-white p-6 rounded-2xl shadow-inner">
         <span class="text-xs font-extrabold uppercase tracking-widest block opacity-90">Actual NTUC FairPrice Price</span>
         <div id="actualPriceDisplay" class="text-5xl md:text-6xl font-black mt-1">$0.00</div>
       </div>
 
-      <div class="flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Round Leaderboard</h3>
-        <span class="text-xs text-red-600 font-bold">*Overbids get 0 pts</span>
-      </div>
-      <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto text-left"></div>
+      <!-- DUAL COLUMN LEADERBOARD CONTAINER -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+        <!-- COLUMN 1: ROUND LEADERBOARD -->
+        <div class="bg-pink-50/60 p-4 rounded-2xl border border-pink-200 flex flex-col">
+          <div class="flex justify-between items-center pb-3 border-b border-pink-200 mb-3">
+            <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Round <span id="roundNumDisplay">1</span> Results
+            </h3>
+            <span class="text-[10px] text-red-600 font-bold">*Overbids = 0 pts</span>
+          </div>
+          <div id="roundLeaderboardList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+        </div>
 
-      <div class="flex gap-4 pt-4">
+        <!-- COLUMN 2: OVERALL CUMULATIVE LEADERBOARD -->
+        <div class="bg-pink-100/60 p-4 rounded-2xl border border-pink-300 flex flex-col">
+          <div class="flex justify-between items-center pb-3 border-b border-pink-300 mb-3">
+            <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
+              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings
+            </h3>
+            <span class="text-[10px] text-pink-800 font-bold uppercase tracking-wider">Cumulative</span>
+          </div>
+          <div id="overallLeaderboardList" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
+        </div>
+      </div>
+
+      <div class="flex gap-4 pt-2">
         <button id="nextBtn" onclick="nextQuestion()" class="flex-1 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
           Next Item <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
@@ -257,7 +276,6 @@
         <input id="playerGuessInput" type="number" step="0.01" placeholder="0.00" class="w-full pl-12 pr-4 py-4 text-4xl font-black text-pink-950 border-4 border-pink-300 rounded-2xl text-center focus:outline-none focus:border-pink-600">
       </div>
 
-      <!-- Updated Denomination Buttons -->
       <div class="grid grid-cols-3 gap-2">
         <button onclick="addGuess(0.01)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.01</button>
         <button onclick="addGuess(0.10)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.10</button>
@@ -284,23 +302,21 @@
   <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
     <div class="bgss-card p-8 space-y-5">
       <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Round Results</span>
-      <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
-        <span class="text-xs text-gray-500 font-bold uppercase block">Your Current Rank</span>
-        <div id="playerRankDisplay" class="text-5xl font-black text-pink-950 mt-1">#-</div>
-      </div>
-
+      
       <div class="grid grid-cols-2 gap-3">
-        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-          <span class="text-xs text-gray-500 block font-bold">Round Score</span>
-          <span id="playerRoundPts" class="text-xl font-black text-pink-900">+0 pts</span>
+        <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
+          <span class="text-[10px] text-gray-500 font-bold uppercase block">Round Rank</span>
+          <div id="playerRoundRankDisplay" class="text-3xl font-black text-pink-950 mt-1">#-</div>
+          <span id="playerRoundPts" class="text-xs font-bold text-pink-700 block mt-1">+0 pts</span>
         </div>
-        <div class="bg-gray-50 p-3 rounded-xl border border-gray-200">
-          <span class="text-xs text-gray-500 block font-bold">Total Score</span>
-          <span id="playerTotalPts" class="text-xl font-black text-gray-900">0 pts</span>
+        <div class="bg-pink-100/60 p-4 rounded-2xl border border-pink-300">
+          <span class="text-[10px] text-pink-900 font-bold uppercase block">Overall Rank</span>
+          <div id="playerOverallRankDisplay" class="text-3xl font-black text-pink-950 mt-1">#-</div>
+          <span id="playerTotalPts" class="text-xs font-bold text-gray-700 block mt-1">0 total pts</span>
         </div>
       </div>
 
-      <p id="playerResultNotice" class="text-xs font-bold text-pink-700"></p>
+      <p id="playerResultNotice" class="text-xs font-bold text-pink-800 bg-pink-50 p-3 rounded-xl border border-pink-100"></p>
     </div>
   </div>
 
@@ -500,6 +516,7 @@
       clearInterval(timerInterval);
       hideAllScreens();
       document.getElementById('hostRevealScreen').classList.remove('hidden');
+      document.getElementById('roundNumDisplay').innerText = currentItemIndex + 1;
 
       const item = itemsDeck[currentItemIndex];
       document.getElementById('actualPriceDisplay').innerText = `$${item.price.toFixed(2)}`;
@@ -526,9 +543,10 @@
           }
         });
 
+        // Sort valid guesses by proximity to calculate round points
         validGuesses.sort((a, b) => a.diff - b.diff);
 
-        let roundResults = [];
+        let roundList = [];
 
         validGuesses.forEach((vg) => {
           let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
@@ -536,7 +554,7 @@
 
           cumulativeScores[vg.name] = (cumulativeScores[vg.name] || 0) + totalRoundPts;
 
-          roundResults.push({
+          roundList.push({
             key: vg.key,
             name: vg.name,
             guess: vg.guess,
@@ -547,7 +565,7 @@
 
         overbids.forEach(ob => {
           cumulativeScores[ob.name] = (cumulativeScores[ob.name] || 0);
-          roundResults.push({
+          roundList.push({
             key: ob.key,
             name: ob.name,
             guess: ob.guess,
@@ -557,38 +575,57 @@
           });
         });
 
-        // Sort overall results by total score to calculate exact ranks
-        roundResults.sort((a, b) => b.total - a.total);
+        // 1. ROUND STANDINGS (Sorted strictly by Round Points earned)
+        let roundSorted = [...roundList].sort((a, b) => b.points - a.points);
+        const roundLb = document.getElementById('roundLeaderboardList');
+        roundLb.innerHTML = '';
 
-        const lbList = document.getElementById('leaderboardList');
-        lbList.innerHTML = '';
+        roundSorted.forEach((s, idx) => {
+          const row = document.createElement('div');
+          const isOverbid = s.points === 0 && s.reason;
+          row.className = `flex justify-between items-center p-2.5 rounded-xl border text-xs ${isOverbid ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100'}`;
+          row.innerHTML = `
+            <div class="flex items-center space-x-2">
+              <span class="w-5 text-center font-black ${isOverbid ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
+              <div>
+                <span class="font-bold text-gray-900 block truncate max-w-[120px]">${s.name}</span>
+                <span class="text-[10px] text-gray-500 block">${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
+              </div>
+            </div>
+            <span class="font-black ${isOverbid ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
+          `;
+          roundLb.appendChild(row);
+        });
+
+        // 2. OVERALL CUMULATIVE STANDINGS (Sorted by Total Accumulated Score)
+        let overallSorted = [...roundList].sort((a, b) => b.total - a.total);
+        const overallLb = document.getElementById('overallLeaderboardList');
+        overallLb.innerHTML = '';
+
         let playerRankMap = {};
 
-        roundResults.forEach((s, idx) => {
+        overallSorted.forEach((s, idx) => {
+          // Find player's round rank for individual feedback
+          let roundRank = roundSorted.findIndex(r => r.key === s.key) + 1;
+
           playerRankMap[s.key] = {
-            rank: idx + 1,
+            roundRank: roundRank,
+            overallRank: idx + 1,
             points: s.points,
             total: s.total,
             reason: s.reason || null
           };
 
           const row = document.createElement('div');
-          const isOverbid = s.points === 0 && s.reason;
-          row.className = `flex justify-between items-center p-3 rounded-xl border ${isOverbid ? 'bg-red-50 border-red-200' : 'bg-pink-50 border-pink-100'}`;
+          row.className = `flex justify-between items-center p-2.5 rounded-xl border text-xs bg-white border-pink-200`;
           row.innerHTML = `
-            <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black ${isOverbid ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
-              <div>
-                <span class="font-bold text-gray-800 block">${s.name}</span>
-                <span class="text-xs text-gray-500">Guess: ${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
-              </div>
+            <div class="flex items-center space-x-2">
+              <span class="w-5 text-center font-black text-pink-800">#${idx + 1}</span>
+              <span class="font-bold text-gray-900 truncate max-w-[130px]">${s.name}</span>
             </div>
-            <div class="text-right">
-              <span class="text-sm font-black ${isOverbid ? 'text-red-600' : 'text-pink-950'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
-              <span class="text-xs text-gray-500 block">Total: ${s.total} pts</span>
-            </div>
+            <span class="font-black text-pink-950">${s.total} pts</span>
           `;
-          lbList.appendChild(row);
+          overallLb.appendChild(row);
         });
 
         const nextBtn = document.getElementById('nextBtn');
@@ -600,7 +637,7 @@
 
         try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
 
-        // Publish round state with player position data to Firebase
+        // Publish round state with distinct dual ranks to Firebase
         db.ref(`games/${currentGamePin}/state`).set({
           status: 'revealed',
           actualPrice: item.price,
@@ -722,15 +759,16 @@
             }
           }
         } else if (state.status === 'revealed') {
-          // Display personalized rank and scores to individual player
+          // Display distinct round rank and overall cumulative rank to player
           hideAllScreens();
           document.getElementById('playerRoundResultScreen').classList.remove('hidden');
           
           if (state.ranks && state.ranks[playerKey]) {
             const myData = state.ranks[playerKey];
-            document.getElementById('playerRankDisplay').innerText = `#${myData.rank}`;
+            document.getElementById('playerRoundRankDisplay').innerText = `#${myData.roundRank}`;
+            document.getElementById('playerOverallRankDisplay').innerText = `#${myData.overallRank}`;
             document.getElementById('playerRoundPts').innerText = `+${myData.points} pts`;
-            document.getElementById('playerTotalPts').innerText = `${myData.total} pts`;
+            document.getElementById('playerTotalPts').innerText = `${myData.total} total pts`;
 
             const noticeEl = document.getElementById('playerResultNotice');
             if (myData.reason === "No Guess") {
