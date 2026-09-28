@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Price Is Right - BGSS Edition</title>
+  <title>BGSS - Big Brain & Video Challenge</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Standard Firebase Compatibility SDKs -->
@@ -18,7 +18,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #880E4F 0%, #C2185B 50%, #D81B60 100%); /* Blessed Grace Magenta Gradient */
+      background: linear-gradient(135deg, #880E4F 0%, #C2185B 50%, #D81B60 100%);
       color: #ffffff;
       min-height: 100vh;
     }
@@ -36,6 +36,11 @@
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
+    /* Dynamic blur & scale reveal animation */
+    .reveal-image {
+      transition: filter 0.15s linear, transform 0.15s linear;
+      will-change: filter, transform;
+    }
   </style>
 </head>
 <body class="flex flex-col justify-between min-h-screen p-4">
@@ -43,9 +48,9 @@
   <!-- Header Bar -->
   <header class="flex justify-between items-center bg-pink-950/80 backdrop-blur p-4 rounded-xl mb-4 border border-pink-400/30">
     <div class="flex items-center space-x-3">
-      <img src="bgsslogo.avif" alt="BGSS Logo" class="h-10 w-auto object-contain rounded-md">
+      <img src="bgsslogo.avif" alt="BGSS Logo" class="h-10 w-auto object-contain rounded-md" onerror="this.style.display='none'">
       <div>
-        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">THE PRICE IS RIGHT</h1>
+        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">BRAIN & REVEAL CHALLENGE</h1>
         <p class="text-xs text-pink-200">Blessed Grace Social Services Edition</p>
       </div>
     </div>
@@ -58,7 +63,7 @@
   <!-- SCREEN 1: ROLE SELECTION -->
   <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
     <div class="bgss-card p-8">
-      <h2 class="text-2xl font-extrabold mb-1 text-pink-900">BGSS Edition</h2>
+      <h2 class="text-2xl font-extrabold mb-1 text-pink-900">BGSS Challenge</h2>
       <p class="text-xs text-pink-700 font-semibold mb-6">Blessed Grace Social Services Competition</p>
       <div class="space-y-4">
         <button onclick="initHost()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
@@ -97,52 +102,51 @@
     </div>
   </div>
 
-  <!-- SCREEN 2B: FULL-PAGE GAME RULES (RIGHT BEFORE GAMEPLAY) -->
+  <!-- SCREEN 2B: FULL-PAGE GAME RULES -->
   <div id="rulesScreen" class="hidden w-full max-w-6xl mx-auto my-auto p-2 md:p-6 flex-1 flex flex-col justify-center">
     <div class="bgss-card p-8 md:p-12 space-y-8 text-center flex-1 flex flex-col justify-between">
       <div>
-        <span class="text-6xl mb-2 block">📋</span>
+        <span class="text-6xl mb-2 block">🧠</span>
         <h2 class="text-4xl md:text-5xl font-black text-pink-950 tracking-wide">HOW TO PLAY</h2>
-        <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Blessed Grace Social Services Rules</p>
+        <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Speed & Accuracy Rules</p>
       </div>
 
-      <!-- Presenter Rule Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto text-left">
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">1</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Guess the Price</h3>
-            <p class="text-base text-gray-700 font-medium">Submit your best estimate for each FairPrice item on your phone.</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Rounds 1–5: Fast Animal Unblur</h3>
+            <p class="text-base text-gray-700 font-medium">An animal picture will quickly unblur and zoom out. Tap the correct animal name!</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">2</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Don't Overbid!</h3>
-            <p class="text-base text-gray-700 font-medium">Bidding even <strong>$0.01 higher</strong> than actual price earns <strong>0 points</strong>!</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Rounds 6–10: Video Guess</h3>
+            <p class="text-base text-gray-700 font-medium">Watch the video snippet on screen and guess who the mystery person is!</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">3</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Proximity Scoring</h3>
-            <p class="text-base text-gray-700 font-medium">The closer your guess is under the actual price, the higher your score.</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Speed Multiplier</h3>
+            <p class="text-base text-gray-700 font-medium">Points decrease as time ticks down! The faster you answer correctly, the more points you get.</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">4</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">30s Timer</h3>
-            <p class="text-base text-gray-700 font-medium">You have 30 seconds per item to lock in your final answer.</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">20s Timer</h3>
+            <p class="text-base text-gray-700 font-medium">You have 20 seconds per question to lock in your choice on your phone.</p>
           </div>
         </div>
       </div>
 
       <div>
-        <button id="rulesProceedBtn" onclick="startGame()" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl md:text-3xl rounded-2xl shadow-xl pulse-btn transform active:scale-95 transition">
+        <button onclick="startGame()" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl md:text-3xl rounded-2xl shadow-xl pulse-btn transform active:scale-95 transition">
           UNDERSTOOD, LET'S BEGIN! <i class="fa-solid fa-arrow-right ml-3"></i>
         </button>
       </div>
@@ -152,31 +156,31 @@
   <!-- SCREEN 3: HOST GAME STAGE -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
     <div class="bgss-card p-6 md:p-8">
-      <div class="flex flex-col md:flex-row gap-6 items-center">
-        <div class="w-52 h-52 p-2 bg-white rounded-2xl border-2 border-pink-100 flex items-center justify-center shadow-sm shrink-0">
-          <img id="itemImg" src="" alt="Product" class="max-h-full max-w-full object-contain">
-        </div>
-        <div class="flex-1 space-y-2 text-center md:text-left">
-          <span id="itemCategory" class="inline-block px-3 py-1 bg-pink-100 text-pink-900 text-xs font-bold rounded-full uppercase">Category</span>
-          <h2 id="itemName" class="text-2xl md:text-3xl font-black text-gray-900">Item Name</h2>
-          <p id="itemDesc" class="text-sm text-gray-600">Description</p>
-          <p id="itemSource" class="text-xs font-bold text-pink-800 bg-pink-100 inline-block px-2 py-1 rounded">Source: NTUC FairPrice (as of 22 Sep 2026)</p>
-        </div>
-        <div class="bg-pink-900 text-white p-4 rounded-2xl text-center min-w-[120px] shadow-lg shrink-0 border border-pink-300">
-          <span class="text-xs text-pink-200 block font-bold uppercase tracking-wider">Time Left</span>
-          <span id="timerDisplay" class="text-4xl font-black text-white">30</span>
+      <div class="flex justify-between items-center mb-4">
+        <span id="questionBadge" class="px-4 py-1.5 bg-pink-100 text-pink-900 font-black rounded-full text-sm uppercase">Question 1 / 10</span>
+        <div class="bg-pink-900 text-white px-4 py-2 rounded-2xl text-center shadow-lg shrink-0 border border-pink-300">
+          <span class="text-[10px] text-pink-200 block font-bold uppercase tracking-wider">Time Left</span>
+          <span id="timerDisplay" class="text-3xl font-black text-white">20</span>
         </div>
       </div>
 
-      <div class="mt-8 bg-pink-50 border-2 border-pink-200 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
+      <h2 id="hostQuestionTitle" class="text-2xl font-black text-pink-950 mb-4 text-center">Guess the Animal!</h2>
+
+      <!-- Display Media Container -->
+      <div class="relative w-full h-80 bg-black rounded-2xl overflow-hidden flex items-center justify-center border-4 border-pink-200 shadow-inner">
+        <img id="revealImg" class="reveal-image w-full h-full object-cover hidden" src="" alt="Reveal Target">
+        <video id="gameVideo" class="w-full h-full object-cover hidden" autoplay loop muted playsinline></video>
+      </div>
+
+      <div class="mt-6 bg-pink-50 border-2 border-pink-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
         <div class="text-center md:text-left">
           <span class="text-xs font-bold text-pink-800 uppercase tracking-wider block">Live Submissions</span>
-          <div class="text-3xl font-black text-pink-950">
-            <span id="submittedCount" class="text-pink-700">0</span> / <span id="totalPlayersCount">0</span> Guesses In
+          <div class="text-2xl font-black text-pink-950">
+            <span id="submittedCount" class="text-pink-700">0</span> / <span id="totalPlayersCount">0</span> Answered
           </div>
         </div>
         <button onclick="revealAnswer()" class="w-full md:w-auto px-8 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg pulse-btn">
-          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL ANSWERS
+          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL ANSWER
         </button>
       </div>
     </div>
@@ -185,9 +189,18 @@
   <!-- SCREEN 4: HOST REVEAL & DUAL-COLUMN LEADERBOARD -->
   <div id="hostRevealScreen" class="hidden max-w-6xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="bgss-card p-6 md:p-8 space-y-6">
-      <div class="bg-pink-600 text-white p-6 rounded-2xl shadow-inner">
-        <span class="text-xs font-extrabold uppercase tracking-widest block opacity-90">Actual NTUC FairPrice Price</span>
-        <div id="actualPriceDisplay" class="text-5xl md:text-6xl font-black mt-1">$0.00</div>
+      
+      <!-- Prominent Video/Image Answer Reveal Container -->
+      <div class="bg-pink-950 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col items-center border-2 border-pink-300 space-y-4">
+        <div class="w-full h-[380px] md:h-[450px] bg-black rounded-xl overflow-hidden border-2 border-pink-200 shadow-inner flex items-center justify-center">
+          <img id="revealResultImg" class="w-full h-full object-cover hidden" src="" alt="Result Image">
+          <video id="revealResultVideo" class="w-full h-full object-contain hidden" autoplay controls playsinline></video>
+        </div>
+        
+        <div class="text-center">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-pink-300 block">Correct Answer</span>
+          <div id="correctAnswerDisplay" class="text-2xl md:text-3xl font-black text-white mt-0.5">Answer Name</div>
+        </div>
       </div>
 
       <!-- DUAL COLUMN LEADERBOARD CONTAINER -->
@@ -196,9 +209,8 @@
         <div class="bg-pink-50/60 p-5 rounded-2xl border border-pink-200 flex flex-col">
           <div class="flex justify-between items-center pb-3 border-b border-pink-200 mb-3">
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Round <span id="roundNumDisplay" class="mx-1">1</span> Results (Top 5)
+              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Question <span id="roundNumDisplay" class="mx-1">1</span> Results (Top 5)
             </h3>
-            <span class="text-[10px] text-red-600 font-bold">*Overbids = 0 pts</span>
           </div>
           <div id="roundLeaderboardList" class="space-y-2.5"></div>
         </div>
@@ -209,7 +221,6 @@
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
               <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings (Top 5)
             </h3>
-            <span class="text-[10px] text-pink-800 font-bold uppercase tracking-wider">Cumulative</span>
           </div>
           <div id="overallLeaderboardList" class="space-y-2.5"></div>
         </div>
@@ -217,7 +228,7 @@
 
       <div class="flex gap-4 pt-2">
         <button id="nextBtn" onclick="nextQuestion()" class="flex-1 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
-          Next Item <i class="fa-solid fa-arrow-right ml-2"></i>
+          Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
     </div>
@@ -227,13 +238,13 @@
   <div id="hostFinalScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
     <div class="bgss-card p-6 md:p-8 space-y-6">
       <div class="text-6xl">🏆</div>
-      <h2 class="text-3xl font-black text-pink-950">BGSS Price is Right Winners:</h2>
-      <p class="text-sm text-gray-500">Overall Standings Across All 5 Rounds</p>
+      <h2 class="text-3xl font-black text-pink-950">BGSS Champions:</h2>
+      <p class="text-sm text-gray-500">Overall Standings Across All 10 Questions</p>
 
       <div id="finalLeaderboardList" class="space-y-2 max-h-80 overflow-y-auto text-left"></div>
 
       <button onclick="location.reload()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
-        Let's Get Ready For Worship!
+        PLAY AGAIN
       </button>
     </div>
   </div>
@@ -241,7 +252,7 @@
   <!-- SCREEN 5: PLAYER JOIN FORM -->
   <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
     <div class="bgss-card p-6 text-center space-y-4">
-      <h2 class="text-2xl font-black text-pink-900">BGSS Edition</h2>
+      <h2 class="text-2xl font-black text-pink-900">BGSS Challenge</h2>
       <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-pink-600">
       <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-pink-600">
       <button id="enterBtn" onclick="joinGame()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
@@ -255,36 +266,19 @@
     <div class="bgss-card p-8 space-y-4">
       <div class="text-5xl animate-bounce">🎉</div>
       <h2 class="text-2xl font-black text-pink-900">You're In!</h2>
-      <p class="text-sm text-gray-600">See your name on the main projector screen. Game starting soon!</p>
+      <p class="text-sm text-gray-600">Look at the main projector screen. Game starting soon!</p>
     </div>
   </div>
 
-  <!-- SCREEN 7: PLAYER GUESS INPUT -->
+  <!-- SCREEN 7: PLAYER MCQ SELECTION INPUT -->
   <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
     <div class="bgss-card p-6 text-center space-y-5">
       <div>
-        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Submit Your Price Guess</span>
-        <h3 id="playerItemTitle" class="text-lg font-bold text-pink-900">Item Name</h3>
+        <span id="playerQBadge" class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Question 1</span>
+        <h3 class="text-xl font-black text-pink-900">Tap the Correct Option!</h3>
       </div>
 
-      <p class="text-xs text-pink-700 font-semibold bg-pink-50 py-1.5 px-3 rounded-lg border border-pink-100">
-        <i class="fa-solid fa-keyboard mr-1"></i> Type your price below or tap quick-add buttons
-      </p>
-      
-      <div class="relative">
-        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-black text-gray-400">$</span>
-        <input id="playerGuessInput" type="number" step="0.01" placeholder="0.00" class="w-full pl-12 pr-4 py-4 text-4xl font-black text-pink-950 border-4 border-pink-300 rounded-2xl text-center focus:outline-none focus:border-pink-600">
-      </div>
-
-      <div class="grid grid-cols-3 gap-2">
-        <button onclick="addGuess(0.01)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.01</button>
-        <button onclick="addGuess(0.10)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $0.10</button>
-        <button onclick="addGuess(1.00)" class="py-3 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black rounded-xl text-base shadow-sm active:scale-95 transition">+ $1.00</button>
-      </div>
-
-      <button id="submitGuessBtn" onclick="submitGuess()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-xl rounded-xl shadow-lg">
-        SUBMIT GUESS
-      </button>
+      <div id="mcqOptionsContainer" class="grid grid-cols-1 gap-3"></div>
     </div>
   </div>
 
@@ -292,8 +286,8 @@
   <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
     <div class="bgss-card p-8 space-y-4">
       <div class="text-5xl text-pink-600"><i class="fa-solid fa-circle-check"></i></div>
-      <h2 id="lockedHeader" class="text-2xl font-black text-pink-900">Guess Locked!</h2>
-      <p class="text-xl font-bold text-pink-700" id="lockedGuessDisplay">$0.00</p>
+      <h2 id="lockedHeader" class="text-2xl font-black text-pink-900">Answer Locked!</h2>
+      <p class="text-xl font-bold text-pink-700" id="lockedChoiceDisplay">Option A</p>
       <p id="lockedSubtext" class="text-xs text-gray-500">Look up at the main screen for results!</p>
     </div>
   </div>
@@ -301,7 +295,7 @@
   <!-- SCREEN 8B: PLAYER ROUND RESULT & LEADERBOARD POSITION -->
   <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
     <div class="bgss-card p-8 space-y-5">
-      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Round Results</span>
+      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Question Results</span>
       
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
@@ -348,41 +342,84 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    const itemsDeck = [
-      { 
-        name: "Gardenia Enriched White Bread (400g)", 
-        price: 2.50, 
-        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/93964_XL1_20240418.jpg?w=1200&q=70", 
-        category: "Bakery & Breads", 
-        desc: "High in calcium & iron, enriched white bread slice." 
+    // --- 10-QUESTION DECK (ACCURATE IMAGE URLS & 1-WORD ANIMAL NAMES) ---
+    const questionsDeck = [
+      {
+        type: "reveal",
+        title: "Who is this Animal?",
+        img: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&w=1000&q=80", // Lion
+        options: ["Lion", "Tiger", "Cheetah", "Leopard"],
+        correctIndex: 0
       },
-      { 
-        name: "Mama Lemon Gold Dishwashing Liquid - Natural Lemon (750ml)", 
-        price: 2.86, 
-        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13004491_LXL1_20220517.jpg?w=1200&q=70", 
-        category: "Household Essentials", 
-        desc: "Super degreasing formula gentle on hands." 
+      {
+        type: "reveal",
+        title: "Who is this Animal?",
+        img: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=1000&q=80", // Elephant
+        options: ["Hippo", "Elephant", "Rhino", "Giraffe"],
+        correctIndex: 1
       },
-      { 
-        name: "Malaysia Red Seedless Watermelon (1 per pack)", 
-        price: 4.95, 
-        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13288765_XL1_20260901T000616.jpg?w=1200&q=70", 
-        category: "Fresh Fruits", 
-        desc: "Fresh, juicy seedless red watermelon." 
+      {
+        type: "reveal",
+        title: "Who is this Animal?",
+        img: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef9?auto=format&fit=crop&w=1000&q=80", // Panda
+        options: ["Bear", "Koala", "Panda", "Sloth"],
+        correctIndex: 2
       },
-      { 
-        name: "Milo 3-in-1 Instant Chocolate Malt with Milk - Regular (16 x 27g)", 
-        price: 7.95, 
-        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/13058254_XL1_20260917T000451.jpg?w=1200&q=70", 
-        category: "Beverages", 
-        desc: "Classic breakfast chocolate malt drink sticks." 
+      {
+        type: "reveal",
+        title: "Who is this Animal?",
+        img: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=1000&q=80", // Giraffe
+        options: ["Zebra", "Giraffe", "Camel", "Deer"],
+        correctIndex: 1
       },
-      { 
-        name: "Haagen-Dazs Ice Cream - Cookies & Cream (473ml)", 
-        price: 14.77, 
-        img: "https://media.nedigital.sg/fairprice/fpol/media/images/product/XL/491746_XL1_20260813T000556.jpg?w=1200&q=70", 
-        category: "Frozen Desserts", 
-        desc: "Rich cream ice cream with dark chocolate cookie chunks." 
+      {
+        type: "reveal",
+        title: "Who is this Animal?",
+        img: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?auto=format&fit=crop&w=1000&q=80", // Penguin
+        options: ["Penguin", "Puffin", "Owl", "Duck"],
+        correctIndex: 0
+      },
+
+      // Video Questions 6-10 (game1.mov -> reveal1.mov)
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game1.mov",
+        revealVideo: "reveal1.mov",
+        options: ["Mitch", "Shi Yun", "John", "Sarah"],
+        correctIndex: 0
+      },
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game2.mov",
+        revealVideo: "reveal2.mov",
+        options: ["Alex", "Shi Yun", "David", "Grace"],
+        correctIndex: 1
+      },
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game3.mov",
+        revealVideo: "reveal3.mov",
+        options: ["Michael", "Daniel", "Mitch", "Shi Yun"],
+        correctIndex: 0
+      },
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game4.mov",
+        revealVideo: "reveal4.mov",
+        options: ["Jessica", "Shi Yun", "Grace", "Hannah"],
+        correctIndex: 2
+      },
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game5.mov",
+        revealVideo: "reveal5.mov",
+        options: ["Mitch", "Jason", "Kevin", "Shi Yun"],
+        correctIndex: 1
       }
     ];
 
@@ -391,14 +428,11 @@
     let currentItemIndex = 0;
     let cumulativeScores = {};
     let timerInterval = null;
+    let revealAnimInterval = null;
+    let questionStartTime = 0;
     let hasSubmittedCurrentRound = false;
 
-    // Common profanity list for nickname filtering
-    const profanityList = [
-      "fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "pussy", 
-      "cock", "whore", "slut", "piss", "nigger", "faggot", "lanjiao", "ccb", 
-      "cb", "puki", "kanina", "knn", "ccb", "chao chee bye"
-    ];
+    const profanityList = ["fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "pussy", "lanjiao", "ccb", "cb", "puki", "kanina", "knn"];
 
     function censorNickname(name) {
       let cleaned = name;
@@ -475,31 +509,60 @@
       hideAllScreens();
       document.getElementById('hostGameScreen').classList.remove('hidden');
 
-      const item = itemsDeck[index];
-      const imgEl = document.getElementById('itemImg');
-      imgEl.src = item.img;
-      imgEl.onerror = () => { imgEl.src = 'https://via.placeholder.com/300?text=FairPrice+Product'; };
+      const q = questionsDeck[index];
+      document.getElementById('questionBadge').innerText = `Question ${index + 1} / 10`;
+      document.getElementById('hostQuestionTitle').innerText = q.title;
 
-      document.getElementById('itemName').innerText = item.name;
-      document.getElementById('itemCategory').innerText = item.category;
-      document.getElementById('itemDesc').innerText = item.desc;
+      const imgEl = document.getElementById('revealImg');
+      const videoEl = document.getElementById('gameVideo');
 
-      db.ref(`games/${currentGamePin}/guesses`).remove();
+      clearInterval(revealAnimInterval);
+
+      if (q.type === "reveal") {
+        videoEl.classList.add('hidden');
+        videoEl.pause();
+        imgEl.classList.remove('hidden');
+        imgEl.src = q.img;
+        
+        // Accelerated Unblur & Zoom-Out effect (~10 sec full reveal)
+        let blurVal = 25;
+        let scaleVal = 3.0;
+        imgEl.style.filter = `blur(${blurVal}px)`;
+        imgEl.style.transform = `scale(${scaleVal})`;
+
+        revealAnimInterval = setInterval(() => {
+          blurVal = Math.max(0, blurVal - 2.5);
+          scaleVal = Math.max(1.0, scaleVal - 0.2);
+          imgEl.style.filter = `blur(${blurVal}px)`;
+          imgEl.style.transform = `scale(${scaleVal})`;
+          if (blurVal <= 0 && scaleVal <= 1.0) clearInterval(revealAnimInterval);
+        }, 1000);
+
+      } else {
+        imgEl.classList.add('hidden');
+        videoEl.classList.remove('hidden');
+        videoEl.src = q.video;
+        videoEl.play().catch(()=>{});
+      }
+
+      db.ref(`games/${currentGamePin}/answers`).remove();
+
+      questionStartTime = Date.now();
 
       db.ref(`games/${currentGamePin}/state`).set({
         status: 'guessing',
         currentIndex: index,
-        itemName: item.name,
+        options: q.options,
         timeExpired: false
       });
 
-      db.ref(`games/${currentGamePin}/guesses`).on('value', snapshot => {
-        const guesses = snapshot.val() || {};
-        document.getElementById('submittedCount').innerText = Object.keys(guesses).length;
+      db.ref(`games/${currentGamePin}/answers`).on('value', snapshot => {
+        const answers = snapshot.val() || {};
+        document.getElementById('submittedCount').innerText = Object.keys(answers).length;
       });
 
-      // Start 30-second host timer
-      let timeLeft = 30;
+      // 20-second countdown timer
+      let timeLeft = 20;
       document.getElementById('timerDisplay').innerText = timeLeft;
       clearInterval(timerInterval);
       timerInterval = setInterval(() => {
@@ -514,65 +577,54 @@
 
     function revealAnswer() {
       clearInterval(timerInterval);
+      clearInterval(revealAnimInterval);
+
       hideAllScreens();
       document.getElementById('hostRevealScreen').classList.remove('hidden');
       document.getElementById('roundNumDisplay').innerText = currentItemIndex + 1;
 
-      const item = itemsDeck[currentItemIndex];
-      document.getElementById('actualPriceDisplay').innerText = `$${item.price.toFixed(2)}`;
+      const q = questionsDeck[currentItemIndex];
+      const correctAnsText = q.options[q.correctIndex];
+      document.getElementById('correctAnswerDisplay').innerText = correctAnsText;
+
+      const resImg = document.getElementById('revealResultImg');
+      const resVideo = document.getElementById('revealResultVideo');
+
+      if (q.type === "reveal") {
+        resVideo.classList.add('hidden');
+        resVideo.pause();
+        resImg.classList.remove('hidden');
+        resImg.src = q.img;
+      } else {
+        resImg.classList.add('hidden');
+        resVideo.classList.remove('hidden');
+        resVideo.src = q.revealVideo;
+        resVideo.play().catch(()=>{});
+      }
 
       db.ref(`games/${currentGamePin}`).once('value', snapshot => {
         const data = snapshot.val() || {};
         const players = data.players || {};
-        const guesses = data.guesses || {};
-
-        let validGuesses = [];
-        let overbids = [];
-
-        Object.keys(players).forEach(pKey => {
-          const playerName = players[pKey].name;
-          const guessVal = guesses[pKey] !== undefined ? parseFloat(guesses[pKey]) : null;
-
-          if (guessVal === null) {
-            overbids.push({ key: pKey, name: playerName, guess: null, points: 0, reason: "No Guess" });
-          } else if (guessVal > item.price) {
-            overbids.push({ key: pKey, name: playerName, guess: guessVal, points: 0, reason: "OVERBID ($" + guessVal.toFixed(2) + ")" });
-          } else {
-            let diff = Math.abs(item.price - guessVal);
-            validGuesses.push({ key: pKey, name: playerName, guess: guessVal, diff: diff });
-          }
-        });
-
-        // Sort valid guesses by proximity to calculate round points
-        validGuesses.sort((a, b) => a.diff - b.diff);
+        const answers = data.answers || {};
 
         let roundList = [];
 
-        validGuesses.forEach((vg) => {
-          let accuracyRatio = Math.max(0, 1 - (vg.diff / item.price));
-          let totalRoundPts = Math.round(1000 * accuracyRatio);
+        Object.keys(players).forEach(pKey => {
+          const playerName = players[pKey].name;
+          const pAns = answers[pKey];
 
-          cumulativeScores[vg.name] = (cumulativeScores[vg.name] || 0) + totalRoundPts;
+          if (!pAns) {
+            roundList.push({ key: pKey, name: playerName, points: 0, reason: "No Answer" });
+          } else if (pAns.selectedIndex !== q.correctIndex) {
+            roundList.push({ key: pKey, name: playerName, points: 0, reason: "Incorrect" });
+          } else {
+            let timeTakenSec = (pAns.timestamp - questionStartTime) / 1000;
+            let timeRatio = Math.max(0, 1 - (timeTakenSec / 20));
+            let pts = Math.round(500 + (500 * timeRatio));
 
-          roundList.push({
-            key: vg.key,
-            name: vg.name,
-            guess: vg.guess,
-            points: totalRoundPts,
-            total: cumulativeScores[vg.name]
-          });
-        });
-
-        overbids.forEach(ob => {
-          cumulativeScores[ob.name] = (cumulativeScores[ob.name] || 0);
-          roundList.push({
-            key: ob.key,
-            name: ob.name,
-            guess: ob.guess,
-            points: 0,
-            total: cumulativeScores[ob.name],
-            reason: ob.reason
-          });
+            cumulativeScores[playerName] = (cumulativeScores[playerName] || 0) + pts;
+            roundList.push({ key: pKey, name: playerName, points: pts, total: cumulativeScores[playerName] });
+          }
         });
 
         // 1. TOP 5 ROUND STANDINGS
@@ -580,26 +632,22 @@
         const roundLb = document.getElementById('roundLeaderboardList');
         roundLb.innerHTML = '';
 
-        // Display Top 5 for Host
         roundSorted.slice(0, 5).forEach((s, idx) => {
           const row = document.createElement('div');
-          const isOverbid = s.points === 0 && s.reason;
-          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${isOverbid ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100 shadow-sm'}`;
+          const isWrong = s.points === 0;
+          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${isWrong ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100 shadow-sm'}`;
           row.innerHTML = `
             <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black ${isOverbid ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
-              <div>
-                <span class="font-bold text-gray-900 block truncate max-w-[140px]">${s.name}</span>
-                <span class="text-xs text-gray-500 block">${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
-              </div>
+              <span class="w-6 text-center font-black ${isWrong ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
+              <span class="font-bold text-gray-900 truncate max-w-[140px]">${s.name}</span>
             </div>
-            <span class="font-black text-base ${isOverbid ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
+            <span class="font-black text-base ${isWrong ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
           `;
           roundLb.appendChild(row);
         });
 
-        // 2. TOP 5 OVERALL CUMULATIVE STANDINGS
-        let overallSorted = [...roundList].sort((a, b) => b.total - a.total);
+        // 2. TOP 5 OVERALL STANDINGS
+        let overallSorted = [...roundList].sort((a, b) => (cumulativeScores[b.name]||0) - (cumulativeScores[a.name]||0));
         const overallLb = document.getElementById('overallLeaderboardList');
         overallLb.innerHTML = '';
 
@@ -612,12 +660,11 @@
             roundRank: roundRank,
             overallRank: idx + 1,
             points: s.points,
-            total: s.total,
+            total: cumulativeScores[s.name] || 0,
             reason: s.reason || null
           };
         });
 
-        // Display Top 5 for Overall Standings
         overallSorted.slice(0, 5).forEach((s, idx) => {
           const row = document.createElement('div');
           row.className = `flex justify-between items-center p-3 rounded-xl border text-sm bg-white border-pink-200 shadow-sm`;
@@ -626,24 +673,22 @@
               <span class="w-6 text-center font-black text-pink-800">#${idx + 1}</span>
               <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name}</span>
             </div>
-            <span class="font-black text-base text-pink-950">${s.total} pts</span>
+            <span class="font-black text-base text-pink-950">${cumulativeScores[s.name] || 0} pts</span>
           `;
           overallLb.appendChild(row);
         });
 
         const nextBtn = document.getElementById('nextBtn');
-        if (currentItemIndex === itemsDeck.length - 1) {
+        if (currentItemIndex === questionsDeck.length - 1) {
           nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-2"></i>';
         } else {
-          nextBtn.innerHTML = 'Next Item <i class="fa-solid fa-arrow-right ml-2"></i>';
+          nextBtn.innerHTML = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
         }
 
         try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
 
-        // Publish round state with distinct dual ranks to Firebase
         db.ref(`games/${currentGamePin}/state`).set({
           status: 'revealed',
-          actualPrice: item.price,
           ranks: playerRankMap
         });
       });
@@ -651,7 +696,7 @@
 
     function nextQuestion() {
       currentItemIndex++;
-      if (currentItemIndex < itemsDeck.length) {
+      if (currentItemIndex < questionsDeck.length) {
         loadItemStage(currentItemIndex);
       } else {
         showFinalLeaderboard();
@@ -662,9 +707,7 @@
       hideAllScreens();
       document.getElementById('hostFinalScreen').classList.remove('hidden');
 
-      db.ref(`games/${currentGamePin}/state`).set({
-        status: 'gameover'
-      });
+      db.ref(`games/${currentGamePin}/state`).set({ status: 'gameover' });
 
       const finalRankings = Object.keys(cumulativeScores).map(name => ({
         name: name,
@@ -690,9 +733,7 @@
         finalLb.appendChild(row);
       });
 
-      try {
-        confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } });
-      } catch(e){}
+      try { confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } }); } catch(e){}
     }
 
     // --- PLAYER LOGIC ---
@@ -712,7 +753,6 @@
       }
 
       const nickname = censorNickname(rawNickname);
-
       btn.disabled = true;
       btn.innerText = "CONNECTING...";
 
@@ -740,7 +780,6 @@
         if (!state) return;
 
         if (state.status === 'guessing') {
-          // Reset submission flag when a new question starts
           if (lastRoundIndex !== state.currentIndex) {
             lastRoundIndex = state.currentIndex;
             hasSubmittedCurrentRound = false;
@@ -751,18 +790,26 @@
               hideAllScreens();
               document.getElementById('playerLockedScreen').classList.remove('hidden');
               document.getElementById('lockedHeader').innerText = "Time's Up!";
-              document.getElementById('lockedGuessDisplay').innerText = "No Submission";
-              document.getElementById('lockedSubtext').innerText = "30-second time limit expired before guess was submitted.";
+              document.getElementById('lockedChoiceDisplay').innerText = "No Choice Made";
+              document.getElementById('lockedSubtext').innerText = "Timer expired before an option was tapped.";
             } else {
               hideAllScreens();
               document.getElementById('playerInputScreen').classList.remove('hidden');
-              document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
-              document.getElementById('playerGuessInput').value = '';
-              document.getElementById('submitGuessBtn').disabled = false;
+              document.getElementById('playerQBadge').innerText = `Question ${state.currentIndex + 1} / 10`;
+
+              const container = document.getElementById('mcqOptionsContainer');
+              container.innerHTML = '';
+
+              (state.options || []).forEach((optText, optIdx) => {
+                const btn = document.createElement('button');
+                btn.className = 'w-full py-4 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-lg rounded-xl shadow-md border-2 border-pink-200 active:scale-95 transition text-left px-5 flex items-center justify-between';
+                btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold">${String.fromCharCode(65 + optIdx)}</span>`;
+                btn.onclick = () => submitMCQChoice(optIdx, optText);
+                container.appendChild(btn);
+              });
             }
           }
         } else if (state.status === 'revealed') {
-          // Display distinct round rank and overall cumulative rank to player
           hideAllScreens();
           document.getElementById('playerRoundResultScreen').classList.remove('hidden');
           
@@ -774,12 +821,12 @@
             document.getElementById('playerTotalPts').innerText = `${myData.total} total pts`;
 
             const noticeEl = document.getElementById('playerResultNotice');
-            if (myData.reason === "No Guess") {
-              noticeEl.innerText = "⚠️ No guess was submitted for this item.";
-            } else if (myData.reason && myData.reason.includes("OVERBID")) {
-              noticeEl.innerText = "⚠️ Overbid! You exceeded the price and earned 0 points.";
+            if (myData.reason === "No Answer") {
+              noticeEl.innerText = "⚠️ No choice was submitted in time.";
+            } else if (myData.reason === "Incorrect") {
+              noticeEl.innerText = "❌ Incorrect option chosen! 0 points.";
             } else {
-              noticeEl.innerText = "🎉 Great guess! Points added to your total.";
+              noticeEl.innerText = "🎉 Correct answer! Speed bonus awarded.";
             }
           }
         } else if (state.status === 'gameover') {
@@ -789,25 +836,16 @@
       });
     }
 
-    function addGuess(val) {
-      const input = document.getElementById('playerGuessInput');
-      let curr = parseFloat(input.value) || 0;
-      input.value = (curr + val).toFixed(2);
-    }
-
-    function submitGuess() {
-      const guessVal = parseFloat(document.getElementById('playerGuessInput').value);
-      if (isNaN(guessVal) || guessVal < 0) {
-        alert("Please enter a valid price guess.");
-        return;
-      }
-
-      db.ref(`games/${currentGamePin}/guesses/${playerKey}`).set(guessVal.toFixed(2)).then(() => {
+    function submitMCQChoice(optIdx, optText) {
+      db.ref(`games/${currentGamePin}/answers/${playerKey}`).set({
+        selectedIndex: optIdx,
+        timestamp: Date.now()
+      }).then(() => {
         hasSubmittedCurrentRound = true;
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
-        document.getElementById('lockedHeader').innerText = "Guess Locked!";
-        document.getElementById('lockedGuessDisplay').innerText = `$${guessVal.toFixed(2)}`;
+        document.getElementById('lockedHeader').innerText = "Answer Locked!";
+        document.getElementById('lockedChoiceDisplay').innerText = optText;
         document.getElementById('lockedSubtext').innerText = "Look up at the main screen for results!";
       });
     }
