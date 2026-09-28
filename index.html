@@ -169,7 +169,7 @@
       <!-- Display Media Container -->
       <div class="relative w-full h-80 bg-black rounded-2xl overflow-hidden flex items-center justify-center border-4 border-pink-200 shadow-inner">
         <img id="revealImg" class="reveal-image w-full h-full object-cover hidden" src="" alt="Reveal Target">
-        <video id="gameVideo" class="w-full h-full object-cover hidden" autoplay loop muted playsinline></video>
+        <video id="gameVideo" class="w-full h-full object-contain hidden" loop playsinline></video>
       </div>
 
       <div class="mt-6 bg-pink-50 border-2 border-pink-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
@@ -194,7 +194,7 @@
       <div class="bg-pink-950 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col items-center border-2 border-pink-300 space-y-4">
         <div class="w-full h-[380px] md:h-[450px] bg-black rounded-xl overflow-hidden border-2 border-pink-200 shadow-inner flex items-center justify-center">
           <img id="revealResultImg" class="w-full h-full object-cover hidden" src="" alt="Result Image">
-          <video id="revealResultVideo" class="w-full h-full object-contain hidden" autoplay controls playsinline></video>
+          <video id="revealResultVideo" class="w-full h-full object-contain hidden" loop controls playsinline></video>
         </div>
         
         <div class="text-center">
@@ -342,7 +342,7 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    // --- 10-QUESTION DECK (ACCURATE IMAGE URLS & 1-WORD ANIMAL NAMES) ---
+    // --- 10-QUESTION DECK WITH UPDATED MP4 ANSWERS ---
     const questionsDeck = [
       {
         type: "reveal",
@@ -361,7 +361,7 @@
       {
         type: "reveal",
         title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef9?auto=format&fit=crop&w=1000&q=80", // Panda
+        img: "https://images.unsplash.com/photo-1703248187251-c897f32fe4ec?auto=format&fit=crop&w=1000&q=80", // Panda
         options: ["Bear", "Koala", "Panda", "Sloth"],
         correctIndex: 2
       },
@@ -380,45 +380,45 @@
         correctIndex: 0
       },
 
-      // Video Questions 6-10 (game1.mov -> reveal1.mov)
+      // Video Questions 6-10 (.mp4 files with audio and loop enabled)
       {
         type: "video",
         title: "Guess Who is in the Video!",
-        video: "game1.mov",
-        revealVideo: "reveal1.mov",
-        options: ["Mitch", "Shi Yun", "John", "Sarah"],
+        video: "game1.mp4",
+        revealVideo: "reveal1.mp4",
+        options: ["Spiderman", "Batman", "Iron Man", "Deadpool"],
         correctIndex: 0
       },
       {
         type: "video",
         title: "Guess Who is in the Video!",
-        video: "game2.mov",
-        revealVideo: "reveal2.mov",
-        options: ["Alex", "Shi Yun", "David", "Grace"],
+        video: "game2.mp4",
+        revealVideo: "reveal2.mp4",
+        options: ["Buzz Lightyear", "Woody", "Sheriff John", "Mr. Potato Head"],
         correctIndex: 1
       },
       {
         type: "video",
         title: "Guess Who is in the Video!",
-        video: "game3.mov",
-        revealVideo: "reveal3.mov",
-        options: ["Michael", "Daniel", "Mitch", "Shi Yun"],
-        correctIndex: 0
-      },
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game4.mov",
-        revealVideo: "reveal4.mov",
-        options: ["Jessica", "Shi Yun", "Grace", "Hannah"],
+        video: "game3.mp4",
+        revealVideo: "reveal3.mp4",
+        options: ["Lee Hsien Loong", "Lawrence Wong", "Tharman Shanmugaratnam", "Ong Ye Kung"],
         correctIndex: 2
       },
       {
         type: "video",
         title: "Guess Who is in the Video!",
-        video: "game5.mov",
-        revealVideo: "reveal5.mov",
-        options: ["Mitch", "Jason", "Kevin", "Shi Yun"],
+        video: "game4.mp4",
+        revealVideo: "reveal4.mp4",
+        options: ["Pastor Samuel", "Pastor Billy", "Steven", "Anthony"],
+        correctIndex: 1
+      },
+      {
+        type: "video",
+        title: "Guess Who is in the Video!",
+        video: "game5.mp4",
+        revealVideo: "reveal5.mp4",
+        options: ["JJ Lin", "Stefanie Sun Yanzi", "Tanya Chua", "Kit Chan"],
         correctIndex: 1
       }
     ];
@@ -505,6 +505,36 @@
       loadItemStage(currentItemIndex);
     }
 
+    function startTimerAndGameState(index, options) {
+      db.ref(`games/${currentGamePin}/answers`).remove();
+      questionStartTime = Date.now();
+
+      db.ref(`games/${currentGamePin}/state`).set({
+        status: 'guessing',
+        currentIndex: index,
+        options: options,
+        timeExpired: false
+      });
+
+      db.ref(`games/${currentGamePin}/answers`).on('value', snapshot => {
+        const answers = snapshot.val() || {};
+        document.getElementById('submittedCount').innerText = Object.keys(answers).length;
+      });
+
+      // 20-second countdown timer
+      let timeLeft = 20;
+      document.getElementById('timerDisplay').innerText = timeLeft;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          db.ref(`games/${currentGamePin}/state/timeExpired`).set(true);
+        }
+      }, 1000);
+    }
+
     function loadItemStage(index) {
       hideAllScreens();
       document.getElementById('hostGameScreen').classList.remove('hidden');
@@ -516,7 +546,9 @@
       const imgEl = document.getElementById('revealImg');
       const videoEl = document.getElementById('gameVideo');
 
+      clearInterval(timerInterval);
       clearInterval(revealAnimInterval);
+      document.getElementById('timerDisplay').innerText = "20";
 
       if (q.type === "reveal") {
         videoEl.classList.add('hidden');
@@ -538,41 +570,20 @@
           if (blurVal <= 0 && scaleVal <= 1.0) clearInterval(revealAnimInterval);
         }, 1000);
 
+        startTimerAndGameState(index, q.options);
+
       } else {
         imgEl.classList.add('hidden');
         videoEl.classList.remove('hidden');
+        videoEl.muted = false; // Audio enabled
         videoEl.src = q.video;
-        videoEl.play().catch(()=>{});
+
+        // Only start timer once the video file is loaded and playing
+        videoEl.onloadeddata = () => {
+          videoEl.play().catch(()=>{});
+          startTimerAndGameState(index, q.options);
+        };
       }
-
-      db.ref(`games/${currentGamePin}/answers`).remove();
-
-      questionStartTime = Date.now();
-
-      db.ref(`games/${currentGamePin}/state`).set({
-        status: 'guessing',
-        currentIndex: index,
-        options: q.options,
-        timeExpired: false
-      });
-
-      db.ref(`games/${currentGamePin}/answers`).on('value', snapshot => {
-        const answers = snapshot.val() || {};
-        document.getElementById('submittedCount').innerText = Object.keys(answers).length;
-      });
-
-      // 20-second countdown timer
-      let timeLeft = 20;
-      document.getElementById('timerDisplay').innerText = timeLeft;
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timerDisplay').innerText = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          db.ref(`games/${currentGamePin}/state/timeExpired`).set(true);
-        }
-      }, 1000);
     }
 
     function revealAnswer() {
@@ -598,6 +609,7 @@
       } else {
         resImg.classList.add('hidden');
         resVideo.classList.remove('hidden');
+        resVideo.muted = false; // Unmuted audio for reveal video
         resVideo.src = q.revealVideo;
         resVideo.play().catch(()=>{});
       }
