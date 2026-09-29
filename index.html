@@ -443,6 +443,19 @@
       return cleaned;
     }
 
+    function stopAllVideos() {
+      const gVideo = document.getElementById('gameVideo');
+      const rVideo = document.getElementById('revealResultVideo');
+      if (gVideo) {
+        gVideo.pause();
+        gVideo.currentTime = 0;
+      }
+      if (rVideo) {
+        rVideo.pause();
+        rVideo.currentTime = 0;
+      }
+    }
+
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const pinParam = urlParams.get('pin');
@@ -453,6 +466,7 @@
     };
 
     function hideAllScreens() {
+      stopAllVideos();
       const screens = ['roleScreen', 'rulesScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerRoundResultScreen', 'playerGameOverScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
@@ -552,7 +566,6 @@
 
       if (q.type === "reveal") {
         videoEl.classList.add('hidden');
-        videoEl.pause();
         imgEl.classList.remove('hidden');
         imgEl.src = q.img;
         
@@ -603,7 +616,6 @@
 
       if (q.type === "reveal") {
         resVideo.classList.add('hidden');
-        resVideo.pause();
         resImg.classList.remove('hidden');
         resImg.src = q.img;
       } else {
