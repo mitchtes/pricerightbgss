@@ -18,52 +18,55 @@
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #880E4F 0%, #C2185B 50%, #D81B60 100%);
+      background: linear-gradient(135deg, #A01A4A 0%, #C2185B 50%, #D81B60 100%);
       color: #ffffff;
       min-height: 100vh;
     }
     .game-card {
-      background: rgba(255, 255, 255, 0.96);
+      background: rgba(255, 255, 255, 0.98);
       color: #1a1a1a;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+      border-radius: 1.5rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     }
     .pulse-btn {
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.03); }
+      50% { transform: scale(1.02); }
       100% { transform: scale(1); }
     }
     .vote-bar {
-      transition: width 1s ease-in-out;
+      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .maroon-panel {
+      background-color: #4A0E22;
     }
   </style>
 </head>
-<body class="flex flex-col justify-between min-h-screen p-4">
+<body class="flex flex-col justify-between min-h-screen p-4 md:p-6 text-white">
 
   <!-- Header Bar -->
-  <header class="flex justify-between items-center bg-pink-950/80 backdrop-blur p-4 rounded-xl mb-4 border border-pink-400/30">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-pink-800 rounded-md flex items-center justify-center text-white text-xl">
+  <header class="flex justify-between items-center bg-black/20 backdrop-blur-md p-4 rounded-2xl mb-4 border border-white/10 shadow-sm">
+    <div class="flex items-center space-x-4">
+      <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center text-white text-2xl shadow-inner">
         <i class="fa-solid fa-users"></i>
       </div>
       <div>
-        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">HERD MENTALITY</h1>
-        <p class="text-xs text-pink-200">Think like the crowd</p>
+        <h1 class="text-2xl md:text-3xl font-black tracking-wider text-white">HERD MENTALITY</h1>
+        <p class="text-sm text-pink-200 font-semibold tracking-wide">Think like the crowd</p>
       </div>
     </div>
-    <div id="pinDisplay" class="hidden text-right">
-      <span class="text-xs uppercase text-pink-200 font-bold tracking-widest block">Game PIN</span>
-      <span id="pinValue" class="text-2xl md:text-3xl font-black text-white tracking-wider">----</span>
+    <div id="pinDisplay" class="hidden text-right bg-black/30 px-6 py-2 rounded-xl border border-white/10">
+      <span class="text-xs uppercase text-pink-300 font-bold tracking-widest block">Game PIN</span>
+      <span id="pinValue" class="text-3xl md:text-4xl font-black text-white tracking-widest drop-shadow-md">----</span>
     </div>
   </header>
 
   <!-- SCREEN 1: ROLE SELECTION -->
   <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
     <div class="game-card p-8">
-      <h2 class="text-3xl font-extrabold mb-1 text-pink-900">Welcome!</h2>
+      <h2 class="text-3xl font-extrabold mb-1 text-pink-950">Welcome!</h2>
       <p class="text-sm text-pink-700 font-semibold mb-6">Select your role to begin</p>
       <div class="space-y-4">
         <button onclick="initHost()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
@@ -77,28 +80,28 @@
   </div>
 
   <!-- SCREEN 2: HOST LOBBY -->
-  <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="game-card p-6 md:p-8">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div class="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl">
-          <p class="text-sm font-bold text-pink-900 mb-2">Scan QR Code on Phone to Join:</p>
-          <img id="qrCodeImg" class="w-56 h-56 rounded-lg shadow border-4 border-white" src="" alt="QR Code">
-          <p class="text-xs font-semibold text-gray-500 mt-2">or visit this URL and enter PIN</p>
+  <div id="hostLobbyScreen" class="hidden max-w-5xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="game-card p-8 md:p-10">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="flex flex-col items-center justify-center p-6 bg-pink-50 rounded-2xl border-2 border-pink-100">
+          <p class="text-base font-black text-pink-900 mb-4">Scan QR Code to Join:</p>
+          <img id="qrCodeImg" class="w-64 h-64 rounded-xl shadow-md border-4 border-white" src="" alt="QR Code">
+          <p class="text-sm font-bold text-gray-500 mt-4">or visit URL and enter PIN</p>
         </div>
-        <div class="space-y-4 text-left">
-          <div class="bg-pink-100 p-4 rounded-xl border border-pink-200">
-            <span class="text-xs font-bold text-pink-800 uppercase tracking-widest">Players Joined</span>
-            <div class="text-5xl font-black text-pink-950 mt-1" id="lobbyPlayerCount">0</div>
+        <div class="space-y-6 text-left">
+          <div class="bg-pink-100 p-6 rounded-2xl border border-pink-200 shadow-inner">
+            <span class="text-sm font-black text-pink-800 uppercase tracking-widest">Players Joined</span>
+            <div class="text-7xl font-black text-pink-950 mt-2" id="lobbyPlayerCount">0</div>
           </div>
-          <p class="text-xs text-gray-500">Wait for all participants to join before starting.</p>
-          <button onclick="showRulesBeforeGame()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-black text-xl rounded-xl shadow-lg pulse-btn">
-            <i class="fa-solid fa-play mr-2"></i> START GAME NOW
+          <p class="text-sm text-gray-600 font-semibold">Wait for all participants to join before starting.</p>
+          <button onclick="showRulesBeforeGame()" class="w-full py-5 bg-pink-600 hover:bg-pink-700 text-white font-black text-2xl rounded-2xl shadow-xl pulse-btn">
+            <i class="fa-solid fa-play mr-2"></i> START GAME
           </button>
         </div>
       </div>
-      <hr class="my-6 border-gray-200">
-      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 text-left">Live Player Roster</h3>
-      <div id="playerList" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2"></div>
+      <hr class="my-8 border-gray-200 border-2 rounded-full">
+      <h3 class="text-base font-black text-gray-500 uppercase tracking-widest mb-4 text-left">Live Player Roster</h3>
+      <div id="playerList" class="flex flex-wrap gap-3 max-h-48 overflow-y-auto p-2"></div>
     </div>
   </div>
 
@@ -106,155 +109,174 @@
   <div id="rulesScreen" class="hidden w-full max-w-6xl mx-auto my-auto p-2 md:p-6 flex-1 flex flex-col justify-center">
     <div class="game-card p-8 md:p-12 space-y-8 text-center flex-1 flex flex-col justify-between">
       <div>
-        <span class="text-6xl mb-2 block">🐑</span>
-        <h2 class="text-4xl md:text-5xl font-black text-pink-950 tracking-wide">HOW TO PLAY</h2>
-        <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Herd Mentality Rules</p>
+        <span class="text-7xl mb-4 block drop-shadow-sm">🐑</span>
+        <h2 class="text-4xl md:text-6xl font-black text-pink-950 tracking-tight">HOW TO PLAY</h2>
+        <p class="text-base font-bold text-pink-600 uppercase tracking-widest mt-3">Herd Mentality Rules</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto text-left">
-        <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
-          <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">1</span>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-auto text-left">
+        <div class="flex items-start space-x-5 bg-pink-50 p-6 rounded-2xl border-2 border-pink-100">
+          <span class="bg-pink-800 text-white text-3xl font-black w-14 h-14 flex items-center justify-center rounded-xl shrink-0 shadow-sm">1</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Join the Herd</h3>
-            <p class="text-base text-gray-700 font-medium">Your goal is to guess what the MAJORITY of the room will pick. If your answer is in the majority, you score 1 point.</p>
+            <h3 class="text-2xl font-black text-pink-900 mb-2">Join the Herd</h3>
+            <p class="text-lg text-gray-700 font-medium">Your goal is to guess what the MAJORITY of the room will pick. If your answer is in the majority, you score 1 point.</p>
           </div>
         </div>
 
-        <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
-          <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">2</span>
+        <div class="flex items-start space-x-5 bg-pink-50 p-6 rounded-2xl border-2 border-pink-100">
+          <span class="bg-pink-800 text-white text-3xl font-black w-14 h-14 flex items-center justify-center rounded-xl shrink-0 shadow-sm">2</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">The Lone Wolf Stigma</h3>
-            <p class="text-base text-gray-700 font-medium">If you are the ONLY person in the room to pick an option, you receive the <b>Lone Wolf Stigma 🐺</b>.</p>
+            <h3 class="text-2xl font-black text-pink-900 mb-2">The Lone Wolf Stigma</h3>
+            <p class="text-lg text-gray-700 font-medium">If you are the ONLY person in the room to pick an option, you receive the <b>Lone Wolf Stigma 🐺</b>.</p>
           </div>
         </div>
 
-        <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
-          <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">3</span>
+        <div class="flex items-start space-x-5 bg-pink-50 p-6 rounded-2xl border-2 border-pink-100">
+          <span class="bg-pink-800 text-white text-3xl font-black w-14 h-14 flex items-center justify-center rounded-xl shrink-0 shadow-sm">3</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Passing the Stigma</h3>
-            <p class="text-base text-gray-700 font-medium">The Stigma stays with you until someone else becomes the new Lone Wolf. If you hold the Stigma at the end of the game, <b>you cannot win</b>.</p>
+            <h3 class="text-2xl font-black text-pink-900 mb-2">Passing the Stigma</h3>
+            <p class="text-lg text-gray-700 font-medium">The Stigma stays with you until someone else becomes the new Lone Wolf. If you hold the Stigma at the end of the game, <b>you cannot win</b>.</p>
           </div>
         </div>
 
-        <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
-          <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">4</span>
+        <div class="flex items-start space-x-5 bg-pink-50 p-6 rounded-2xl border-2 border-pink-100">
+          <span class="bg-pink-800 text-white text-3xl font-black w-14 h-14 flex items-center justify-center rounded-xl shrink-0 shadow-sm">4</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Winning the Game</h3>
-            <p class="text-base text-gray-700 font-medium">There is no time limit for voting. The game ends immediately when a player reaches <b>10 points</b>.</p>
+            <h3 class="text-2xl font-black text-pink-900 mb-2">Winning the Game</h3>
+            <p class="text-lg text-gray-700 font-medium">There is no time limit for voting. The game ends immediately when a player reaches <b>10 points</b>.</p>
           </div>
         </div>
       </div>
 
       <div>
-        <button onclick="startGame()" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl md:text-3xl rounded-2xl shadow-xl pulse-btn transform active:scale-95 transition">
-          UNDERSTOOD, LET'S BEGIN! <i class="fa-solid fa-arrow-right ml-3"></i>
+        <button onclick="startGame()" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-3xl rounded-2xl shadow-xl pulse-btn transform active:scale-95 transition">
+          UNDERSTOOD, LET'S BEGIN! <i class="fa-solid fa-arrow-right ml-4"></i>
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE -->
-  <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
-    <div class="game-card p-6 md:p-8">
-      <div class="flex justify-between items-center mb-6">
-        <span id="questionBadge" class="px-4 py-1.5 bg-pink-100 text-pink-900 font-black rounded-full text-sm uppercase">Round 1</span>
-        <div class="bg-pink-900 text-white px-4 py-2 rounded-2xl text-center shadow-lg shrink-0 border border-pink-300">
-          <span class="text-xs text-pink-200 block font-bold uppercase tracking-wider">Voting Open</span>
+  <!-- SCREEN 3: HOST GAME STAGE (Voting) -->
+  <div id="hostGameScreen" class="hidden w-full max-w-[90vw] mx-auto my-auto space-y-6">
+    <div class="game-card p-8 md:p-12">
+      <div class="flex justify-between items-center mb-8">
+        <span id="questionBadge" class="px-6 py-2 bg-pink-100 text-pink-900 font-black rounded-full text-lg uppercase tracking-widest shadow-sm">Round 1</span>
+        <div class="bg-pink-900 text-white px-6 py-3 rounded-full shadow-lg border border-pink-700 flex items-center space-x-3">
+          <div class="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+          <span class="text-sm font-black uppercase tracking-widest">Voting Open</span>
         </div>
       </div>
 
-      <div class="min-h-[250px] flex flex-col items-center justify-center bg-pink-50 rounded-2xl border-4 border-pink-200 shadow-inner p-8 text-center space-y-6">
-        <h2 id="hostQuestionTitle" class="text-3xl md:text-4xl font-black text-pink-950 leading-tight">Question goes here?</h2>
-        <div id="hostOptionsDisplay" class="flex flex-wrap justify-center gap-4 w-full">
+      <div class="min-h-[350px] flex flex-col items-center justify-center bg-pink-50/50 rounded-3xl border-4 border-pink-100 p-10 text-center space-y-10 shadow-inner">
+        <h2 id="hostQuestionTitle" class="text-5xl md:text-7xl font-black text-pink-950 leading-tight drop-shadow-sm">Question goes here?</h2>
+        <div id="hostOptionsDisplay" class="flex flex-wrap justify-center gap-6 w-full mt-4">
             <!-- Options populated by JS -->
         </div>
       </div>
 
-      <div class="mt-6 bg-pink-50 border-2 border-pink-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="text-center md:text-left">
-          <span class="text-xs font-bold text-pink-800 uppercase tracking-wider block">Live Submissions</span>
-          <div class="text-2xl font-black text-pink-950">
-            <span id="submittedCount" class="text-pink-700">0</span> / <span id="totalPlayersCount">0</span> Answered
+      <div class="mt-8 bg-pink-50 border-2 border-pink-100 p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-6 shadow-sm">
+        <div class="text-center md:text-left flex items-center space-x-6">
+          <div class="bg-pink-100 w-16 h-16 rounded-2xl flex items-center justify-center text-3xl text-pink-700 shadow-inner">
+            <i class="fa-solid fa-mobile-screen"></i>
+          </div>
+          <div>
+            <span class="text-sm font-black text-pink-800 uppercase tracking-widest block">Live Submissions</span>
+            <div class="text-4xl font-black text-pink-950 mt-1">
+              <span id="submittedCount" class="text-pink-600">0</span> <span class="text-2xl text-gray-400">/</span> <span id="totalPlayersCount" class="text-3xl text-gray-500">0</span>
+            </div>
           </div>
         </div>
-        <button onclick="revealAnswer()" class="w-full md:w-auto px-8 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg pulse-btn">
-          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL RESULTS
+        <button onclick="revealAnswer()" class="w-full md:w-auto px-10 py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl rounded-2xl shadow-xl pulse-btn transition">
+          <i class="fa-solid fa-lock mr-3"></i> LOCK & REVEAL RESULTS
         </button>
       </div>
     </div>
   </div>
 
   <!-- SCREEN 4: HOST REVEAL & DUAL-COLUMN LEADERBOARD -->
-  <div id="hostRevealScreen" class="hidden max-w-6xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="game-card p-6 md:p-8 space-y-6">
+  <!-- WIDENED TO MAXIMIZE TV SPACE -->
+  <div id="hostRevealScreen" class="hidden w-full max-w-[96vw] mx-auto my-auto space-y-6 text-center">
+    <div class="game-card p-6 md:p-10 space-y-8 shadow-2xl">
       
-      <!-- Vote Tally Reveal Container -->
-      <div class="bg-pink-950 text-white p-6 md:p-8 rounded-2xl shadow-xl border-2 border-pink-300 space-y-6">
-        <h3 id="revealQuestionTitle" class="text-2xl md:text-3xl font-black text-white">Question Title</h3>
+      <!-- Huge Maroon Vote Tally Reveal Container -->
+      <div class="maroon-panel text-white p-8 md:p-12 rounded-[2rem] shadow-xl border-4 border-[#3a0a1a] space-y-8">
+        <h3 id="revealQuestionTitle" class="text-4xl md:text-6xl font-black text-white drop-shadow-md leading-tight">Question Title</h3>
         
-        <div id="voteResultsContainer" class="space-y-4">
-          <!-- Populated dynamically with progress bars and player names -->
+        <div id="voteResultsContainer" class="space-y-5 max-w-6xl mx-auto w-full">
+          <!-- Populated dynamically with massive progress bars -->
         </div>
 
-        <div class="pt-4 border-t border-pink-800">
-          <span class="text-xs font-extrabold uppercase tracking-widest text-pink-300 block">The Majority Choice</span>
-          <div id="majorityDisplay" class="text-2xl font-black text-pink-100 mt-1">Answer Name</div>
+        <div class="pt-8 border-t border-white/10 max-w-4xl mx-auto">
+          <span class="text-sm font-black uppercase tracking-widest text-pink-400 block mb-2">The Majority Choice</span>
+          <div id="majorityDisplay" class="text-4xl md:text-5xl font-black text-white drop-shadow-lg">Answer Name</div>
         </div>
       </div>
 
-      <!-- DUAL COLUMN LEADERBOARD CONTAINER -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+      <!-- DUAL COLUMN LEADERBOARD CONTAINER (Side-by-side, high visibility) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
         <!-- COLUMN 1: TOP ROUND SCORERS -->
-        <div class="bg-pink-50/60 p-5 rounded-2xl border border-pink-200 flex flex-col">
-          <div class="flex justify-between items-center pb-3 border-b border-pink-200 mb-3">
-            <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-users mr-2 text-pink-700"></i> The Herd (+1 pt)
+        <div class="bg-pink-50 p-6 md:p-8 rounded-[2rem] border-2 border-pink-100 flex flex-col shadow-sm">
+          <div class="flex justify-between items-center pb-4 border-b-2 border-pink-200 mb-4">
+            <h3 class="text-xl font-black text-pink-950 uppercase tracking-widest flex items-center">
+              <i class="fa-solid fa-users mr-3 text-pink-600 text-2xl"></i> The Herd (+1 pt)
             </h3>
           </div>
-          <div id="roundLeaderboardList" class="space-y-2.5 max-h-48 overflow-y-auto"></div>
+          <!-- Increased height slightly to accommodate larger rows -->
+          <div id="roundLeaderboardList" class="space-y-3 max-h-[250px] overflow-y-auto pr-2"></div>
         </div>
 
         <!-- COLUMN 2: TOP 5 OVERALL CUMULATIVE LEADERBOARD -->
-        <div class="bg-pink-100/60 p-5 rounded-2xl border border-pink-300 flex flex-col">
-          <div class="flex justify-between items-center pb-3 border-b border-pink-300 mb-3">
-            <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings (First to 10)
+        <div class="bg-pink-100 p-6 md:p-8 rounded-[2rem] border-2 border-pink-200 flex flex-col shadow-sm">
+          <div class="flex justify-between items-center pb-4 border-b-2 border-pink-300 mb-4">
+            <h3 class="text-xl font-black text-pink-950 uppercase tracking-widest flex items-center">
+              <i class="fa-solid fa-trophy mr-3 text-pink-700 text-2xl"></i> Overall Standings (First to 10)
             </h3>
           </div>
-          <div id="overallLeaderboardList" class="space-y-2.5"></div>
+          <div id="overallLeaderboardList" class="space-y-3"></div>
         </div>
       </div>
 
-      <div class="flex gap-4 pt-2">
-        <button id="nextBtn" class="flex-1 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
-          Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
+      <div class="pt-2">
+        <button id="nextBtn" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-3xl rounded-2xl shadow-xl transition">
+          Next Question <i class="fa-solid fa-arrow-right ml-3"></i>
         </button>
       </div>
     </div>
   </div>
 
   <!-- SCREEN 4B: GRAND FINAL LEADERBOARD -->
-  <div id="hostFinalScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="game-card p-6 md:p-8 space-y-6">
-      <div class="text-6xl">🏆</div>
-      <h2 class="text-3xl font-black text-pink-950">Ultimate Mind Readers:</h2>
-      <p class="text-sm text-gray-500">Final Standings</p>
+  <div id="hostFinalScreen" class="hidden w-full max-w-5xl mx-auto my-auto space-y-6 text-center">
+    <div class="game-card p-10 md:p-16 space-y-10 shadow-2xl">
+      <div class="text-8xl drop-shadow-xl animate-bounce">🏆</div>
+      <div>
+        <h2 class="text-5xl md:text-6xl font-black text-pink-950 tracking-tight">Ultimate Mind Readers</h2>
+        <p class="text-xl font-bold text-gray-500 uppercase tracking-widest mt-4">Final Standings</p>
+      </div>
 
-      <div id="finalLeaderboardList" class="space-y-2 max-h-[400px] overflow-y-auto text-left"></div>
+      <div id="finalLeaderboardList" class="space-y-4 max-h-[500px] overflow-y-auto text-left px-4"></div>
 
-      <button onclick="location.reload()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
-        PLAY AGAIN
-      </button>
+      <div class="pt-6">
+        <button onclick="location.reload()" class="w-full py-6 bg-pink-800 hover:bg-pink-900 text-white font-black text-3xl rounded-2xl shadow-xl transition">
+          PLAY AGAIN <i class="fa-solid fa-rotate-right ml-3"></i>
+        </button>
+      </div>
     </div>
   </div>
 
   <!-- SCREEN 5: PLAYER JOIN FORM -->
   <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="game-card p-6 text-center space-y-4">
-      <h2 class="text-2xl font-black text-pink-900">Herd Mentality</h2>
-      <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-pink-600">
-      <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-pink-600">
-      <button id="enterBtn" onclick="joinGame()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+    <div class="game-card p-8 text-center space-y-5">
+      <div class="w-16 h-16 bg-pink-100 text-pink-700 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-2">
+        <i class="fa-solid fa-users"></i>
+      </div>
+      <h2 class="text-3xl font-black text-pink-950">Herd Mentality</h2>
+      <p class="text-sm font-bold text-gray-500 pb-2">Enter PIN and a Nickname</p>
+      
+      <input id="inputPin" type="number" placeholder="4-Digit PIN" class="w-full p-4 bg-gray-50 border-2 border-pink-200 rounded-xl text-center text-2xl font-black tracking-widest focus:outline-none focus:border-pink-600 focus:bg-white transition shadow-inner">
+      
+      <input id="inputNickname" type="text" maxlength="15" placeholder="Nickname" class="w-full p-4 bg-gray-50 border-2 border-pink-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-pink-600 focus:bg-white transition shadow-inner">
+      
+      <button id="enterBtn" onclick="joinGame()" class="w-full py-5 bg-pink-600 hover:bg-pink-700 text-white font-black text-xl rounded-xl shadow-lg transform active:scale-95 transition mt-2">
         ENTER GAME
       </button>
     </div>
@@ -262,63 +284,72 @@
 
   <!-- SCREEN 6: PLAYER WAITING ROOM -->
   <div id="playerWaitingScreen" class="hidden max-w-md mx-auto my-auto w-full text-center space-y-4">
-    <div class="game-card p-8 space-y-4">
-      <div class="text-5xl animate-bounce">🐑</div>
-      <h2 class="text-2xl font-black text-pink-900">You're In!</h2>
-      <p class="text-sm text-gray-600">Look at the main projector screen. Game starting soon!</p>
+    <div class="game-card p-10 space-y-6 shadow-xl">
+      <div class="text-7xl animate-bounce drop-shadow-md">🐑</div>
+      <h2 class="text-3xl font-black text-pink-950">You're In!</h2>
+      <div class="bg-pink-50 border border-pink-100 p-4 rounded-xl">
+        <p class="text-sm font-bold text-gray-600">Look at the main projector screen.</p>
+        <p class="text-base font-black text-pink-800 mt-1">Game starting soon!</p>
+      </div>
     </div>
   </div>
 
   <!-- SCREEN 7: PLAYER MCQ SELECTION INPUT -->
   <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="game-card p-6 text-center space-y-5">
-      <div>
-        <span id="playerQBadge" class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Round 1</span>
-        <h3 class="text-xl font-black text-pink-900">What will the majority pick?</h3>
+    <div class="game-card p-6 md:p-8 text-center space-y-6 shadow-xl">
+      <div class="pb-2 border-b-2 border-pink-100">
+        <span id="playerQBadge" class="text-xs font-black text-pink-500 uppercase tracking-widest block mb-2">Round 1</span>
+        <!-- Directly display the question on the player's phone -->
+        <h3 id="playerQuestionTitle" class="text-2xl font-black text-pink-950 leading-tight">Question goes here?</h3>
       </div>
 
-      <div id="mcqOptionsContainer" class="grid grid-cols-1 gap-3"></div>
+      <div id="mcqOptionsContainer" class="grid grid-cols-1 gap-4"></div>
     </div>
   </div>
 
   <!-- SCREEN 8: PLAYER GUESS LOCKED -->
   <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-8 space-y-4">
-      <div class="text-5xl text-pink-600"><i class="fa-solid fa-circle-check"></i></div>
-      <h2 id="lockedHeader" class="text-2xl font-black text-pink-900">Answer Locked!</h2>
-      <p class="text-xl font-bold text-pink-700" id="lockedChoiceDisplay">Option A</p>
-      <p id="lockedSubtext" class="text-xs text-gray-500">Waiting for the host to reveal the results...</p>
+    <div class="game-card p-10 space-y-6 shadow-xl">
+      <div class="text-7xl text-pink-600 drop-shadow-sm"><i class="fa-solid fa-circle-check"></i></div>
+      <h2 id="lockedHeader" class="text-3xl font-black text-pink-950">Locked In!</h2>
+      <div class="bg-pink-50 border-2 border-pink-100 p-5 rounded-2xl">
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Your Choice</span>
+        <p class="text-2xl font-black text-pink-800" id="lockedChoiceDisplay">Option A</p>
+      </div>
+      <p id="lockedSubtext" class="text-sm font-bold text-gray-500">Waiting for the host to reveal results...</p>
     </div>
   </div>
 
   <!-- SCREEN 8B: PLAYER ROUND RESULT & LEADERBOARD POSITION -->
   <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-8 space-y-5">
-      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Round Results</span>
+    <div class="game-card p-8 space-y-6 shadow-xl">
+      <span class="text-sm font-black text-pink-800 uppercase tracking-widest block border-b-2 border-pink-100 pb-3">Round Results</span>
       
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
-          <span class="text-[10px] text-gray-500 font-bold uppercase block">Round Status</span>
-          <div id="playerRoundIconDisplay" class="text-3xl mt-1">🐑</div>
-          <span id="playerRoundPts" class="text-xs font-bold text-pink-700 block mt-1">+0 pts</span>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-pink-50 p-5 rounded-2xl border-2 border-pink-100 shadow-inner">
+          <span class="text-xs text-gray-500 font-bold uppercase tracking-wide block">Round Status</span>
+          <div id="playerRoundIconDisplay" class="text-4xl mt-2 mb-1 drop-shadow-sm">🐑</div>
+          <span id="playerRoundPts" class="text-sm font-black text-pink-700 block mt-2 bg-pink-100 py-1 rounded-lg">+0 pts</span>
         </div>
-        <div class="bg-pink-100/60 p-4 rounded-2xl border border-pink-300">
-          <span class="text-[10px] text-pink-900 font-bold uppercase block">Overall Rank</span>
-          <div id="playerOverallRankDisplay" class="text-3xl font-black text-pink-950 mt-1">#-</div>
-          <span id="playerTotalPts" class="text-xs font-bold text-gray-700 block mt-1">0 total pts</span>
+        <div class="bg-pink-100 p-5 rounded-2xl border-2 border-pink-200 shadow-inner">
+          <span class="text-xs text-pink-900 font-bold uppercase tracking-wide block">Overall Rank</span>
+          <div id="playerOverallRankDisplay" class="text-4xl font-black text-pink-950 mt-2 mb-1">#-</div>
+          <span id="playerTotalPts" class="text-sm font-black text-gray-800 block mt-2 bg-white/60 py-1 rounded-lg">0 total pts</span>
         </div>
       </div>
 
-      <p id="playerResultNotice" class="text-sm font-bold text-pink-800 bg-pink-50 p-3 rounded-xl border border-pink-100"></p>
+      <p id="playerResultNotice" class="text-base font-bold text-pink-800 bg-pink-50 p-4 rounded-xl border-2 border-pink-100 leading-snug"></p>
     </div>
   </div>
 
   <!-- SCREEN 9: PLAYER GAME OVER SCREEN -->
   <div id="playerGameOverScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-8 space-y-4">
-      <div class="text-6xl animate-bounce">🏁</div>
-      <h2 class="text-3xl font-black text-pink-900">Game Over!</h2>
-      <p class="text-lg font-bold text-pink-700">Look up at the main screen for the winners!</p>
+    <div class="game-card p-10 space-y-6 shadow-xl">
+      <div class="text-7xl animate-bounce drop-shadow-md">🏁</div>
+      <h2 class="text-4xl font-black text-pink-950">Game Over!</h2>
+      <div class="bg-pink-50 p-5 rounded-2xl border-2 border-pink-100">
+        <p class="text-xl font-black text-pink-800">Check the main screen for the ultimate winners!</p>
+      </div>
     </div>
   </div>
 
@@ -341,7 +372,7 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    // --- DECK (30 Questions, simple formatting, no em dashes) ---
+    // --- DECK (30 Questions) ---
     const questionsDeck = [
       { title: "Breakfast, Lunch, or Dinner?", options: ["Breakfast", "Lunch", "Dinner"] },
       { title: "You have a time machine - where will you go:", options: ["Past", "Future"] },
@@ -436,7 +467,7 @@
           if (cumulativeScores[pKey] === undefined) cumulativeScores[pKey] = 0;
           
           const badge = document.createElement('span');
-          badge.className = 'px-3 py-1 bg-pink-100 text-pink-950 text-xs font-extrabold rounded-full shadow-sm';
+          badge.className = 'px-4 py-2 bg-pink-100 text-pink-950 text-sm font-black rounded-lg shadow-sm border border-pink-200';
           badge.innerText = players[pKey].name;
           playerList.appendChild(badge);
         });
@@ -486,8 +517,8 @@
       optsDisplay.innerHTML = '';
       q.options.forEach((optText, optIdx) => {
         const badge = document.createElement('div');
-        badge.className = 'px-4 py-2 bg-white text-pink-900 border-2 border-pink-300 rounded-xl font-bold text-lg shadow-sm';
-        badge.innerHTML = `<span class="bg-pink-100 text-pink-800 px-2 py-1 rounded text-sm mr-2">${String.fromCharCode(65 + optIdx)}</span> ${optText}`;
+        badge.className = 'px-6 py-4 bg-white text-pink-950 border-4 border-pink-200 rounded-2xl font-black text-3xl shadow-sm flex items-center';
+        badge.innerHTML = `<span class="bg-pink-100 text-pink-800 w-10 h-10 flex items-center justify-center rounded-xl text-xl mr-4">${String.fromCharCode(65 + optIdx)}</span> ${optText}`;
         optsDisplay.appendChild(badge);
       });
 
@@ -540,7 +571,6 @@
             const intIdx = parseInt(idx);
             if (voteCounts[idx] === maxVotes) majorityIndices.push(intIdx);
             
-            // To be a lone wolf option: exactly 1 vote, AND it cannot be the majority (prevents 1-player bugs)
             if (voteCounts[idx] === 1 && maxVotes > 1) {
               optionIndicesWithOneVote.push(intIdx);
             }
@@ -579,7 +609,7 @@
           currentLoneWolfKeys = newlyStigmatizedKeys;
         }
 
-        // 4. Render Bar Charts and show who voted for what
+        // 4. Render Giant Bar Charts and show who voted for what
         const resultsContainer = document.getElementById('voteResultsContainer');
         resultsContainer.innerHTML = '';
         
@@ -590,28 +620,28 @@
           const votersForThisOption = optionVoters[idx];
           
           const row = document.createElement('div');
-          row.className = 'w-full bg-pink-900/40 rounded-xl p-3 border border-pink-700/50 flex flex-col space-y-2';
+          row.className = 'w-full bg-black/30 rounded-2xl p-4 border border-white/10 flex flex-col space-y-3';
           
-          const barColor = isMajority ? 'bg-pink-500' : 'bg-pink-800/50';
+          const barColor = isMajority ? 'bg-pink-600' : 'bg-pink-900/80';
           
           let badgesHtml = '';
           if (votersForThisOption.length > 0) {
-            badgesHtml = `<div class="flex flex-wrap gap-2 mt-2">` + 
-              votersForThisOption.map(name => `<span class="px-2 py-1 bg-black/30 text-white rounded text-xs">${name}</span>`).join('') + 
+            badgesHtml = `<div class="flex flex-wrap gap-2 mt-1 z-10 px-2 pb-1">` + 
+              votersForThisOption.map(name => `<span class="px-3 py-1.5 bg-black/50 text-white rounded-lg text-sm font-bold shadow-sm">${name}</span>`).join('') + 
               `</div>`;
           } else {
-            badgesHtml = `<div class="text-xs text-gray-500 mt-2 italic">No votes</div>`;
+            badgesHtml = `<div class="text-sm font-bold text-white/30 mt-1 z-10 px-3 pb-1 italic">No votes</div>`;
           }
 
           row.innerHTML = `
-            <div class="relative w-full flex justify-between items-center overflow-hidden rounded p-2">
-              <div class="absolute top-0 left-0 h-full ${barColor} vote-bar opacity-40 rounded" style="width: 0%"></div>
-              <div class="relative z-10 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center font-bold text-sm">${String.fromCharCode(65 + idx)}</span>
-                <span class="font-bold text-lg ${isMajority ? 'text-white' : 'text-gray-300'}">${optText}</span>
+            <div class="relative w-full flex justify-between items-center overflow-hidden rounded-xl p-4">
+              <div class="absolute top-0 left-0 h-full ${barColor} vote-bar opacity-90 rounded-xl" style="width: 0%"></div>
+              <div class="relative z-10 flex items-center gap-4">
+                <span class="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center font-black text-lg shadow-sm">${String.fromCharCode(65 + idx)}</span>
+                <span class="font-black text-2xl md:text-4xl text-white drop-shadow-md">${optText}</span>
               </div>
-              <div class="relative z-10 font-black text-xl ${isMajority ? 'text-white' : 'text-gray-400'}">
-                ${votes} <span class="text-xs font-normal">votes</span> (${percentage}%)
+              <div class="relative z-10 font-black text-3xl md:text-4xl text-white drop-shadow-md">
+                ${votes} <span class="text-lg font-bold opacity-80 uppercase tracking-widest">votes</span> (${percentage}%)
               </div>
             </div>
             ${badgesHtml}
@@ -622,7 +652,7 @@
           setTimeout(() => {
             const bar = row.querySelector('.vote-bar');
             if (bar) bar.style.width = `${percentage}%`;
-          }, 100);
+          }, 150);
         });
 
         // 5. Update Majority Text
@@ -636,30 +666,30 @@
           majorityDisplay.innerText = q.options[majorityIndices[0]];
         }
 
-        // 6. TOP ROUND STANDINGS (Anyone who got points)
+        // 6. TOP ROUND STANDINGS
         let roundSorted = [...roundList].filter(r => r.points > 0).sort((a, b) => b.points - a.points);
         const roundLb = document.getElementById('roundLeaderboardList');
         roundLb.innerHTML = '';
         
         if (roundSorted.length === 0) {
-          roundLb.innerHTML = '<p class="text-gray-500 text-sm italic">No one scored points this round.</p>';
+          roundLb.innerHTML = '<p class="text-gray-500 font-bold italic py-4">No one scored points this round.</p>';
         } else {
           roundSorted.forEach((s) => {
             const isWolf = currentLoneWolfKeys.includes(s.key);
             const row = document.createElement('div');
-            row.className = `flex justify-between items-center p-2 rounded-lg border text-sm bg-white border-pink-100 shadow-sm`;
+            row.className = `flex justify-between items-center p-4 rounded-xl border-2 text-lg bg-white border-pink-100 shadow-sm`;
             row.innerHTML = `
-              <div class="flex items-center space-x-2">
-                <span class="text-lg">🐑</span>
-                <span class="font-bold text-gray-900 truncate max-w-[140px]">${s.name} ${isWolf ? '🐺' : ''}</span>
+              <div class="flex items-center space-x-3">
+                <span class="text-2xl">🐑</span>
+                <span class="font-bold text-gray-900 truncate max-w-[200px]">${s.name} ${isWolf ? '🐺' : ''}</span>
               </div>
-              <span class="font-black text-sm text-pink-900">+${s.points}</span>
+              <span class="font-black text-xl text-pink-900 bg-pink-100 px-3 py-1 rounded-lg">+${s.points}</span>
             `;
             roundLb.appendChild(row);
           });
         }
 
-        // 7. TOP 5 OVERALL STANDINGS & Check for Game Over (First to 10)
+        // 7. TOP 5 OVERALL STANDINGS & Check for Game Over
         let overallSorted = [...roundList].sort((a, b) => (cumulativeScores[b.key]||0) - (cumulativeScores[a.key]||0));
         const overallLb = document.getElementById('overallLeaderboardList');
         overallLb.innerHTML = '';
@@ -685,13 +715,13 @@
         overallSorted.slice(0, 5).forEach((s, idx) => {
           const isWolf = currentLoneWolfKeys.includes(s.key);
           const row = document.createElement('div');
-          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm bg-white border-pink-200 shadow-sm`;
+          row.className = `flex justify-between items-center p-4 rounded-xl border-2 text-lg bg-white border-pink-200 shadow-sm`;
           row.innerHTML = `
-            <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black text-pink-800">#${idx + 1}</span>
-              <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name} ${isWolf ? '🐺' : ''}</span>
+            <div class="flex items-center space-x-4">
+              <span class="w-8 text-center font-black text-pink-800 text-2xl">#${idx + 1}</span>
+              <span class="font-black text-gray-900 truncate max-w-[200px]">${s.name} ${isWolf ? '🐺' : ''}</span>
             </div>
-            <span class="font-black text-base text-pink-950">${cumulativeScores[s.key] || 0} pts</span>
+            <span class="font-black text-2xl text-pink-950">${cumulativeScores[s.key] || 0} pts</span>
           `;
           overallLb.appendChild(row);
         });
@@ -699,10 +729,10 @@
         const nextBtn = document.getElementById('nextBtn');
         if (highestScore >= 10 || currentItemIndex >= questionsDeck.length - 1) {
           nextBtn.onclick = showFinalLeaderboard;
-          nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-2"></i>';
+          nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-3"></i>';
         } else {
           nextBtn.onclick = nextQuestion;
-          nextBtn.innerHTML = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
+          nextBtn.innerHTML = 'Next Question <i class="fa-solid fa-arrow-right ml-3"></i>';
         }
 
         try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
@@ -749,27 +779,27 @@
 
         finalRankings.forEach((r, idx) => {
           let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-          let cardStyle = idx === 0 ? 'bg-pink-200 border-pink-400' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-pink-100 border-pink-200' : 'bg-pink-50 border-pink-100';
+          let cardStyle = idx === 0 ? 'bg-pink-100 border-pink-400' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-orange-50 border-orange-200' : 'bg-pink-50 border-pink-100';
 
           if (r.isWolf) {
             medal = '🐺';
-            cardStyle = 'bg-red-100 border-red-400 opacity-80'; 
+            cardStyle = 'bg-red-100 border-red-400 opacity-90'; 
           }
 
           const row = document.createElement('div');
-          row.className = `flex justify-between items-center p-4 rounded-xl border-2 ${cardStyle}`;
+          row.className = `flex justify-between items-center p-6 rounded-2xl border-4 ${cardStyle} shadow-sm`;
           row.innerHTML = `
-            <div class="flex items-center space-x-4">
-              <span class="text-2xl font-black">${medal}</span>
-              <span class="text-lg font-black text-gray-900 ${r.isWolf ? 'line-through' : ''}">${r.name}</span>
-              ${r.isWolf ? '<span class="text-xs font-bold text-red-700 bg-red-200 px-2 py-1 rounded">DISQUALIFIED</span>' : ''}
+            <div class="flex items-center space-x-6">
+              <span class="text-4xl font-black">${medal}</span>
+              <span class="text-3xl font-black text-gray-900 ${r.isWolf ? 'line-through' : ''}">${r.name}</span>
+              ${r.isWolf ? '<span class="text-sm font-black text-red-800 bg-red-200 border border-red-300 px-3 py-1 rounded-lg">DISQUALIFIED</span>' : ''}
             </div>
-            <span class="text-xl font-black ${r.isWolf ? 'text-red-800' : 'text-pink-950'}">${r.score} PTS</span>
+            <span class="text-4xl font-black ${r.isWolf ? 'text-red-800' : 'text-pink-950'}">${r.score} PTS</span>
           `;
           finalLb.appendChild(row);
         });
 
-        try { confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } }); } catch(e){}
+        try { confetti({ particleCount: 350, spread: 150, origin: { y: 0.4 } }); } catch(e){}
       });
     }
 
@@ -826,14 +856,17 @@
             hideAllScreens();
             document.getElementById('playerInputScreen').classList.remove('hidden');
             document.getElementById('playerQBadge').innerText = `Round ${state.currentIndex + 1}`;
+            
+            // Replaced generic text with actual question title for mobile users
+            document.getElementById('playerQuestionTitle').innerText = questionsDeck[state.currentIndex].title;
 
             const container = document.getElementById('mcqOptionsContainer');
             container.innerHTML = '';
 
             (state.options || []).forEach((optText, optIdx) => {
               const btn = document.createElement('button');
-              btn.className = 'w-full py-4 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-lg rounded-xl shadow-md border-2 border-pink-200 active:scale-95 transition text-left px-5 flex items-center justify-between';
-              btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold">${String.fromCharCode(65 + optIdx)}</span>`;
+              btn.className = 'w-full py-5 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-xl rounded-2xl shadow-sm border-2 border-pink-200 active:scale-95 transition text-left px-6 flex items-center justify-between';
+              btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-8 h-8 flex items-center justify-center rounded-xl text-sm font-bold shadow-inner">${String.fromCharCode(65 + optIdx)}</span>`;
               btn.onclick = () => submitMCQChoice(optIdx, optText);
               container.appendChild(btn);
             });
@@ -852,23 +885,23 @@
             
             if (myData.reason === "No Answer") {
               iconDisplay.innerText = "⏳";
-              noticeEl.className = "text-sm font-bold text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-200";
+              noticeEl.className = "text-base font-bold text-gray-600 bg-gray-50 p-4 rounded-xl border-2 border-gray-200 leading-snug";
               noticeEl.innerText = "No choice was submitted.";
             } else if (myData.isNewWolf) {
               iconDisplay.innerText = "🐺";
-              noticeEl.className = "text-sm font-bold text-red-700 bg-red-50 p-3 rounded-xl border border-red-300";
+              noticeEl.className = "text-base font-bold text-red-700 bg-red-50 p-4 rounded-xl border-2 border-red-300 leading-snug";
               noticeEl.innerText = "NEW LONE WOLF! You took the stigma because you were the only one who picked your option.";
             } else if (myData.isLoneWolf) {
               iconDisplay.innerText = "🐺";
-              noticeEl.className = "text-sm font-bold text-red-700 bg-red-50 p-3 rounded-xl border border-red-300";
+              noticeEl.className = "text-base font-bold text-red-700 bg-red-50 p-4 rounded-xl border-2 border-red-300 leading-snug";
               noticeEl.innerText = "LONE WOLF STIGMA: You cannot win unless someone else takes the stigma.";
             } else if (myData.reason === "Minority") {
               iconDisplay.innerText = "❌";
-              noticeEl.className = "text-sm font-bold text-orange-700 bg-orange-50 p-3 rounded-xl border border-orange-200";
+              noticeEl.className = "text-base font-bold text-orange-700 bg-orange-50 p-4 rounded-xl border-2 border-orange-200 leading-snug";
               noticeEl.innerText = "You went against the herd. 0 pts.";
             } else {
               iconDisplay.innerText = "🐑";
-              noticeEl.className = "text-sm font-bold text-green-700 bg-green-50 p-3 rounded-xl border border-green-200";
+              noticeEl.className = "text-base font-bold text-green-700 bg-green-50 p-4 rounded-xl border-2 border-green-200 leading-snug";
               noticeEl.innerText = "You went with the herd! +1 pt.";
             }
           }
@@ -886,7 +919,7 @@
         hasSubmittedCurrentRound = true;
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
-        document.getElementById('lockedHeader').innerText = "Answer Locked!";
+        document.getElementById('lockedHeader').innerText = "Locked In!";
         document.getElementById('lockedChoiceDisplay').innerText = optText;
         document.getElementById('lockedSubtext').innerText = "Waiting for the host to reveal the results...";
       });
