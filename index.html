@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BGSS - 29 Sep Icebreaker</title>
+  <title>Herd Mentality</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Standard Firebase Compatibility SDKs -->
@@ -22,7 +22,7 @@
       color: #ffffff;
       min-height: 100vh;
     }
-    .bgss-card {
+    .game-card {
       background: rgba(255, 255, 255, 0.96);
       color: #1a1a1a;
       border-radius: 1rem;
@@ -36,10 +36,8 @@
       50% { transform: scale(1.03); }
       100% { transform: scale(1); }
     }
-    /* Dynamic blur & scale reveal animation */
-    .reveal-image {
-      transition: filter 0.15s linear, transform 0.15s linear;
-      will-change: filter, transform;
+    .vote-bar {
+      transition: width 1s ease-in-out;
     }
   </style>
 </head>
@@ -48,10 +46,12 @@
   <!-- Header Bar -->
   <header class="flex justify-between items-center bg-pink-950/80 backdrop-blur p-4 rounded-xl mb-4 border border-pink-400/30">
     <div class="flex items-center space-x-3">
-      <img src="bgsslogo.avif" alt="BGSS Logo" class="h-10 w-auto object-contain rounded-md" onerror="this.style.display='none'">
+      <div class="w-10 h-10 bg-pink-800 rounded-md flex items-center justify-center text-white text-xl">
+        <i class="fa-solid fa-users"></i>
+      </div>
       <div>
-        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">BRAIN & REVEAL CHALLENGE</h1>
-        <p class="text-xs text-pink-200">Blessed Grace Social Services Edition</p>
+        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white">HERD MENTALITY</h1>
+        <p class="text-xs text-pink-200">Think like the crowd</p>
       </div>
     </div>
     <div id="pinDisplay" class="hidden text-right">
@@ -62,9 +62,9 @@
 
   <!-- SCREEN 1: ROLE SELECTION -->
   <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
-    <div class="bgss-card p-8">
-      <h2 class="text-2xl font-extrabold mb-1 text-pink-900">Welcome!</h2>
-      <p class="text-xs text-pink-700 font-semibold mb-6">BGSS Tuesday Support Group Icebreaker</p>
+    <div class="game-card p-8">
+      <h2 class="text-3xl font-extrabold mb-1 text-pink-900">Welcome!</h2>
+      <p class="text-sm text-pink-700 font-semibold mb-6">Select your role to begin</p>
       <div class="space-y-4">
         <button onclick="initHost()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
           <i class="fa-solid fa-desktop mr-2"></i> HOST GAME (Projector)
@@ -78,7 +78,7 @@
 
   <!-- SCREEN 2: HOST LOBBY -->
   <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="bgss-card p-6 md:p-8">
+    <div class="game-card p-6 md:p-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
         <div class="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-xl">
           <p class="text-sm font-bold text-pink-900 mb-2">Scan QR Code on Phone to Join:</p>
@@ -104,43 +104,43 @@
 
   <!-- SCREEN 2B: FULL-PAGE GAME RULES -->
   <div id="rulesScreen" class="hidden w-full max-w-6xl mx-auto my-auto p-2 md:p-6 flex-1 flex flex-col justify-center">
-    <div class="bgss-card p-8 md:p-12 space-y-8 text-center flex-1 flex flex-col justify-between">
+    <div class="game-card p-8 md:p-12 space-y-8 text-center flex-1 flex flex-col justify-between">
       <div>
-        <span class="text-6xl mb-2 block">🧠</span>
+        <span class="text-6xl mb-2 block">🐑</span>
         <h2 class="text-4xl md:text-5xl font-black text-pink-950 tracking-wide">HOW TO PLAY</h2>
-        <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Speed & Accuracy Rules</p>
+        <p class="text-sm md:text-base font-bold text-pink-600 uppercase tracking-widest mt-2">Herd Mentality Rules</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-auto text-left">
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">1</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Rounds 1–5: Fast Animal Unblur</h3>
-            <p class="text-base text-gray-700 font-medium">An animal picture will quickly unblur and zoom out. Tap the correct animal name!</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Join the Herd</h3>
+            <p class="text-base text-gray-700 font-medium">Your goal is to guess what the MAJORITY of the room will pick. If your answer is in the majority, you score 1 point.</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">2</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Rounds 6–10: Video Guess</h3>
-            <p class="text-base text-gray-700 font-medium">Watch the video snippet on screen and guess who the mystery person is!</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">The Lone Wolf Stigma</h3>
+            <p class="text-base text-gray-700 font-medium">If you are the ONLY person in the room to pick an option, you receive the <b>Lone Wolf Stigma 🐺</b>.</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">3</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">Speed Multiplier</h3>
-            <p class="text-base text-gray-700 font-medium">Points decrease as time ticks down! The faster you answer correctly, the more points you get.</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Passing the Stigma</h3>
+            <p class="text-base text-gray-700 font-medium">The Stigma stays with you until someone else becomes the new Lone Wolf. If you hold the Stigma at the end of the game, <b>you cannot win</b>.</p>
           </div>
         </div>
 
         <div class="flex items-start space-x-4 bg-pink-50 p-6 rounded-2xl border-2 border-pink-200 shadow-sm">
           <span class="bg-pink-800 text-white text-2xl font-black w-12 h-12 flex items-center justify-center rounded-xl shrink-0">4</span>
           <div>
-            <h3 class="text-xl font-black text-pink-900 mb-1">20s Timer</h3>
-            <p class="text-base text-gray-700 font-medium">You have 20 seconds per question to lock in your choice on your phone.</p>
+            <h3 class="text-xl font-black text-pink-900 mb-1">Winning the Game</h3>
+            <p class="text-base text-gray-700 font-medium">There is no time limit for voting. The game ends immediately when a player reaches <b>10 points</b>.</p>
           </div>
         </div>
       </div>
@@ -155,21 +155,19 @@
 
   <!-- SCREEN 3: HOST GAME STAGE -->
   <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
-    <div class="bgss-card p-6 md:p-8">
-      <div class="flex justify-between items-center mb-4">
-        <span id="questionBadge" class="px-4 py-1.5 bg-pink-100 text-pink-900 font-black rounded-full text-sm uppercase">Question 1 / 10</span>
+    <div class="game-card p-6 md:p-8">
+      <div class="flex justify-between items-center mb-6">
+        <span id="questionBadge" class="px-4 py-1.5 bg-pink-100 text-pink-900 font-black rounded-full text-sm uppercase">Round 1</span>
         <div class="bg-pink-900 text-white px-4 py-2 rounded-2xl text-center shadow-lg shrink-0 border border-pink-300">
-          <span class="text-[10px] text-pink-200 block font-bold uppercase tracking-wider">Time Left</span>
-          <span id="timerDisplay" class="text-3xl font-black text-white">20</span>
+          <span class="text-xs text-pink-200 block font-bold uppercase tracking-wider">Voting Open</span>
         </div>
       </div>
 
-      <h2 id="hostQuestionTitle" class="text-2xl font-black text-pink-950 mb-4 text-center">Guess the Animal!</h2>
-
-      <!-- Display Media Container -->
-      <div class="relative w-full h-80 bg-black rounded-2xl overflow-hidden flex items-center justify-center border-4 border-pink-200 shadow-inner">
-        <img id="revealImg" class="reveal-image w-full h-full object-cover hidden" src="" alt="Reveal Target">
-        <video id="gameVideo" class="w-full h-full object-contain hidden" loop playsinline></video>
+      <div class="min-h-[250px] flex flex-col items-center justify-center bg-pink-50 rounded-2xl border-4 border-pink-200 shadow-inner p-8 text-center space-y-6">
+        <h2 id="hostQuestionTitle" class="text-3xl md:text-4xl font-black text-pink-950 leading-tight">Question goes here?</h2>
+        <div id="hostOptionsDisplay" class="flex flex-wrap justify-center gap-4 w-full">
+            <!-- Options populated by JS -->
+        </div>
       </div>
 
       <div class="mt-6 bg-pink-50 border-2 border-pink-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-center gap-4">
@@ -180,7 +178,7 @@
           </div>
         </div>
         <button onclick="revealAnswer()" class="w-full md:w-auto px-8 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg pulse-btn">
-          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL ANSWER
+          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL RESULTS
         </button>
       </div>
     </div>
@@ -188,38 +186,39 @@
 
   <!-- SCREEN 4: HOST REVEAL & DUAL-COLUMN LEADERBOARD -->
   <div id="hostRevealScreen" class="hidden max-w-6xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="bgss-card p-6 md:p-8 space-y-6">
+    <div class="game-card p-6 md:p-8 space-y-6">
       
-      <!-- Prominent Video/Image Answer Reveal Container -->
-      <div class="bg-pink-950 text-white p-4 md:p-6 rounded-2xl shadow-xl flex flex-col items-center border-2 border-pink-300 space-y-4">
-        <div class="w-full h-[380px] md:h-[450px] bg-black rounded-xl overflow-hidden border-2 border-pink-200 shadow-inner flex items-center justify-center">
-          <img id="revealResultImg" class="w-full h-full object-cover hidden" src="" alt="Result Image">
-          <video id="revealResultVideo" class="w-full h-full object-contain hidden" loop controls playsinline></video>
-        </div>
+      <!-- Vote Tally Reveal Container -->
+      <div class="bg-pink-950 text-white p-6 md:p-8 rounded-2xl shadow-xl border-2 border-pink-300 space-y-6">
+        <h3 id="revealQuestionTitle" class="text-2xl md:text-3xl font-black text-white">Question Title</h3>
         
-        <div class="text-center">
-          <span class="text-xs font-extrabold uppercase tracking-widest text-pink-300 block">Correct Answer</span>
-          <div id="correctAnswerDisplay" class="text-2xl md:text-3xl font-black text-white mt-0.5">Answer Name</div>
+        <div id="voteResultsContainer" class="space-y-4">
+          <!-- Populated dynamically with progress bars and player names -->
+        </div>
+
+        <div class="pt-4 border-t border-pink-800">
+          <span class="text-xs font-extrabold uppercase tracking-widest text-pink-300 block">The Majority Choice</span>
+          <div id="majorityDisplay" class="text-2xl font-black text-pink-100 mt-1">Answer Name</div>
         </div>
       </div>
 
       <!-- DUAL COLUMN LEADERBOARD CONTAINER -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-        <!-- COLUMN 1: TOP 5 ROUND LEADERBOARD -->
+        <!-- COLUMN 1: TOP ROUND SCORERS -->
         <div class="bg-pink-50/60 p-5 rounded-2xl border border-pink-200 flex flex-col">
           <div class="flex justify-between items-center pb-3 border-b border-pink-200 mb-3">
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-stopwatch mr-2 text-pink-700"></i> Question <span id="roundNumDisplay" class="mx-1">1</span> Results (Top 5)
+              <i class="fa-solid fa-users mr-2 text-pink-700"></i> The Herd (+1 pt)
             </h3>
           </div>
-          <div id="roundLeaderboardList" class="space-y-2.5"></div>
+          <div id="roundLeaderboardList" class="space-y-2.5 max-h-48 overflow-y-auto"></div>
         </div>
 
         <!-- COLUMN 2: TOP 5 OVERALL CUMULATIVE LEADERBOARD -->
         <div class="bg-pink-100/60 p-5 rounded-2xl border border-pink-300 flex flex-col">
           <div class="flex justify-between items-center pb-3 border-b border-pink-300 mb-3">
             <h3 class="text-base font-black text-pink-950 uppercase tracking-wider flex items-center">
-              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings (Top 5)
+              <i class="fa-solid fa-trophy mr-2 text-pink-800"></i> Overall Standings (First to 10)
             </h3>
           </div>
           <div id="overallLeaderboardList" class="space-y-2.5"></div>
@@ -227,7 +226,7 @@
       </div>
 
       <div class="flex gap-4 pt-2">
-        <button id="nextBtn" onclick="nextQuestion()" class="flex-1 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
+        <button id="nextBtn" class="flex-1 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
           Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
@@ -236,12 +235,12 @@
 
   <!-- SCREEN 4B: GRAND FINAL LEADERBOARD -->
   <div id="hostFinalScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
-    <div class="bgss-card p-6 md:p-8 space-y-6">
+    <div class="game-card p-6 md:p-8 space-y-6">
       <div class="text-6xl">🏆</div>
-      <h2 class="text-3xl font-black text-pink-950">BGSS Champions:</h2>
-      <p class="text-sm text-gray-500">Overall Standings Across All 10 Questions</p>
+      <h2 class="text-3xl font-black text-pink-950">Ultimate Mind Readers:</h2>
+      <p class="text-sm text-gray-500">Final Standings</p>
 
-      <div id="finalLeaderboardList" class="space-y-2 max-h-80 overflow-y-auto text-left"></div>
+      <div id="finalLeaderboardList" class="space-y-2 max-h-[400px] overflow-y-auto text-left"></div>
 
       <button onclick="location.reload()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg">
         PLAY AGAIN
@@ -251,8 +250,8 @@
 
   <!-- SCREEN 5: PLAYER JOIN FORM -->
   <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="bgss-card p-6 text-center space-y-4">
-      <h2 class="text-2xl font-black text-pink-900">BGSS Challenge</h2>
+    <div class="game-card p-6 text-center space-y-4">
+      <h2 class="text-2xl font-black text-pink-900">Herd Mentality</h2>
       <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-pink-600">
       <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-pink-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-pink-600">
       <button id="enterBtn" onclick="joinGame()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
@@ -263,8 +262,8 @@
 
   <!-- SCREEN 6: PLAYER WAITING ROOM -->
   <div id="playerWaitingScreen" class="hidden max-w-md mx-auto my-auto w-full text-center space-y-4">
-    <div class="bgss-card p-8 space-y-4">
-      <div class="text-5xl animate-bounce">🎉</div>
+    <div class="game-card p-8 space-y-4">
+      <div class="text-5xl animate-bounce">🐑</div>
       <h2 class="text-2xl font-black text-pink-900">You're In!</h2>
       <p class="text-sm text-gray-600">Look at the main projector screen. Game starting soon!</p>
     </div>
@@ -272,10 +271,10 @@
 
   <!-- SCREEN 7: PLAYER MCQ SELECTION INPUT -->
   <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="bgss-card p-6 text-center space-y-5">
+    <div class="game-card p-6 text-center space-y-5">
       <div>
-        <span id="playerQBadge" class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Question 1</span>
-        <h3 class="text-xl font-black text-pink-900">Tap the Correct Option!</h3>
+        <span id="playerQBadge" class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Round 1</span>
+        <h3 class="text-xl font-black text-pink-900">What will the majority pick?</h3>
       </div>
 
       <div id="mcqOptionsContainer" class="grid grid-cols-1 gap-3"></div>
@@ -284,23 +283,23 @@
 
   <!-- SCREEN 8: PLAYER GUESS LOCKED -->
   <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="bgss-card p-8 space-y-4">
+    <div class="game-card p-8 space-y-4">
       <div class="text-5xl text-pink-600"><i class="fa-solid fa-circle-check"></i></div>
       <h2 id="lockedHeader" class="text-2xl font-black text-pink-900">Answer Locked!</h2>
       <p class="text-xl font-bold text-pink-700" id="lockedChoiceDisplay">Option A</p>
-      <p id="lockedSubtext" class="text-xs text-gray-500">Look up at the main screen for results!</p>
+      <p id="lockedSubtext" class="text-xs text-gray-500">Waiting for the host to reveal the results...</p>
     </div>
   </div>
 
   <!-- SCREEN 8B: PLAYER ROUND RESULT & LEADERBOARD POSITION -->
   <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="bgss-card p-8 space-y-5">
-      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Question Results</span>
+    <div class="game-card p-8 space-y-5">
+      <span class="text-xs font-black text-pink-800 uppercase tracking-widest block">Round Results</span>
       
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-pink-50 p-4 rounded-2xl border border-pink-200">
-          <span class="text-[10px] text-gray-500 font-bold uppercase block">Round Rank</span>
-          <div id="playerRoundRankDisplay" class="text-3xl font-black text-pink-950 mt-1">#-</div>
+          <span class="text-[10px] text-gray-500 font-bold uppercase block">Round Status</span>
+          <div id="playerRoundIconDisplay" class="text-3xl mt-1">🐑</div>
           <span id="playerRoundPts" class="text-xs font-bold text-pink-700 block mt-1">+0 pts</span>
         </div>
         <div class="bg-pink-100/60 p-4 rounded-2xl border border-pink-300">
@@ -310,13 +309,13 @@
         </div>
       </div>
 
-      <p id="playerResultNotice" class="text-xs font-bold text-pink-800 bg-pink-50 p-3 rounded-xl border border-pink-100"></p>
+      <p id="playerResultNotice" class="text-sm font-bold text-pink-800 bg-pink-50 p-3 rounded-xl border border-pink-100"></p>
     </div>
   </div>
 
   <!-- SCREEN 9: PLAYER GAME OVER SCREEN -->
   <div id="playerGameOverScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="bgss-card p-8 space-y-4">
+    <div class="game-card p-8 space-y-4">
       <div class="text-6xl animate-bounce">🏁</div>
       <h2 class="text-3xl font-black text-pink-900">Game Over!</h2>
       <p class="text-lg font-bold text-pink-700">Look up at the main screen for the winners!</p>
@@ -342,94 +341,47 @@
       alert("Firebase Init Error: " + e.message);
     }
 
-    // --- 10-QUESTION DECK WITH UPDATED MP4 ANSWERS ---
+    // --- DECK (30 Questions, simple formatting, no em dashes) ---
     const questionsDeck = [
-      {
-        type: "reveal",
-        title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&w=1000&q=80", // Lion
-        options: ["Lion", "Tiger", "Cheetah", "Leopard"],
-        correctIndex: 0
-      },
-      {
-        type: "reveal",
-        title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=1000&q=80", // Elephant
-        options: ["Hippo", "Elephant", "Rhino", "Giraffe"],
-        correctIndex: 1
-      },
-      {
-        type: "reveal",
-        title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1703248187251-c897f32fe4ec?auto=format&fit=crop&w=1000&q=80", // Panda
-        options: ["Bear", "Koala", "Panda", "Sloth"],
-        correctIndex: 2
-      },
-      {
-        type: "reveal",
-        title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?auto=format&fit=crop&w=1000&q=80", // Giraffe
-        options: ["Zebra", "Giraffe", "Camel", "Deer"],
-        correctIndex: 1
-      },
-      {
-        type: "reveal",
-        title: "Who is this Animal?",
-        img: "https://images.unsplash.com/photo-1598439210625-5067c578f3f6?auto=format&fit=crop&w=1000&q=80", // Penguin
-        options: ["Penguin", "Puffin", "Owl", "Duck"],
-        correctIndex: 0
-      },
-
-      // Video Questions 6-10 (.mp4 files with audio and loop enabled)
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game1.mp4",
-        revealVideo: "reveal1.mp4",
-        options: ["Spiderman", "Batman", "Iron Man", "Deadpool"],
-        correctIndex: 0
-      },
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game2.mp4",
-        revealVideo: "reveal2.mp4",
-        options: ["Buzz Lightyear", "Woody", "Sheriff John", "Mr. Potato Head"],
-        correctIndex: 1
-      },
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game3.mp4",
-        revealVideo: "reveal3.mp4",
-        options: ["Lee Hsien Loong", "Lawrence Wong", "Tharman Shanmugaratnam", "Ong Ye Kung"],
-        correctIndex: 2
-      },
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game4.mp4",
-        revealVideo: "reveal4.mp4",
-        options: ["Pastor Samuel", "Pastor Billy", "Steven", "Anthony"],
-        correctIndex: 1
-      },
-      {
-        type: "video",
-        title: "Guess Who is in the Video!",
-        video: "game5.mp4",
-        revealVideo: "reveal5.mp4",
-        options: ["Alin", "Stefanie Sun Yanzi", "Tanya Chua", "Kit Chan"],
-        correctIndex: 1
-      }
+      { title: "Breakfast, Lunch, or Dinner?", options: ["Breakfast", "Lunch", "Dinner"] },
+      { title: "You have a time machine - where will you go:", options: ["Past", "Future"] },
+      { title: "Best superpower out of 3:", options: ["Invisibility", "Teleportation", "Mind-Reading"] },
+      { title: "Preferred phone communication:", options: ["Text", "Call", "Voice Message"] },
+      { title: "Which is worse?", options: ["Noisy", "Messy", "Late"] },
+      { title: "Hit snooze?", options: ["Never", "Once", "Multiple times"] },
+      { title: "Pineapple on pizza?", options: ["Yes", "No"] },
+      { title: "Pets?", options: ["Dog", "Cat", "Neither"] },
+      { title: "Plane seat?", options: ["Window", "Aisle"] },
+      { title: "Watching a series:", options: ["Binge it", "One episode a day", "2x Speed"] },
+      { title: "Shower time:", options: ["Morning", "Night", "Both"] },
+      { title: "Movie genre:", options: ["Action", "Comedy", "Horror"] },
+      { title: "Vacation type:", options: ["Nature", "City", "Cruise"] },
+      { title: "Bean Curd or Grass Jelly?", options: ["Bean Curd", "Grass Jelly"] },
+      { title: "Mobile platform:", options: ["iOS", "Android"] },
+      { title: "Coffee or Tea?", options: ["Coffee", "Tea", "Neither"] },
+      { title: "Best fries shape:", options: ["Straight cut", "Curly", "Waffle"] },
+      { title: "Would you rather have:", options: ["More intelligence", "More money"] },
+      { title: "KFC or Macs:", options: ["KFC", "Macs"] },
+      { title: "Sweet or Savory?", options: ["Sweet", "Savory"] },
+      { title: "Burger or Pizza?", options: ["Burger", "Pizza"] },
+      { title: "Reading a book:", options: ["Physical book", "E-book", "Audio book"] },
+      { title: "Sleeping time:", options: ["Before 11", "After 11"] },
+      { title: "Best season:", options: ["Summer", "Winter", "Spring or Fall"] },
+      { title: "Working out:", options: ["Gym", "Home", "Outdoors"] },
+      { title: "Video games:", options: ["PC", "Console", "Mobile"] },
+      { title: "Pancakes or Waffles?", options: ["Pancakes", "Waffles"] },
+      { title: "Music listening:", options: ["Headphones", "Speakers"] },
+      { title: "Social media:", options: ["Instagram", "TikTok", "YouTube"] },
+      { title: "Sleep position:", options: ["Back", "Side", "Stomach"] }
     ];
 
     let currentGamePin = null;
     let playerKey = null;
     let currentItemIndex = 0;
-    let cumulativeScores = {};
-    let timerInterval = null;
-    let revealAnimInterval = null;
-    let questionStartTime = 0;
+    
+    // Core Game States
+    let cumulativeScores = {}; // Keys are playerKey, Values are integer points
+    let currentLoneWolfKeys = []; // Array of playerKeys currently holding the stigma
     let hasSubmittedCurrentRound = false;
 
     const profanityList = ["fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "pussy", "lanjiao", "ccb", "cb", "puki", "kanina", "knn"];
@@ -443,19 +395,6 @@
       return cleaned;
     }
 
-    function stopAllVideos() {
-      const gVideo = document.getElementById('gameVideo');
-      const rVideo = document.getElementById('revealResultVideo');
-      if (gVideo) {
-        gVideo.pause();
-        gVideo.currentTime = 0;
-      }
-      if (rVideo) {
-        rVideo.pause();
-        rVideo.currentTime = 0;
-      }
-    }
-
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const pinParam = urlParams.get('pin');
@@ -466,7 +405,6 @@
     };
 
     function hideAllScreens() {
-      stopAllVideos();
       const screens = ['roleScreen', 'rulesScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerRoundResultScreen', 'playerGameOverScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
@@ -493,11 +431,13 @@
         playerList.innerHTML = '';
         let count = 0;
 
-        Object.values(players).forEach(p => {
+        Object.keys(players).forEach(pKey => {
           count++;
+          if (cumulativeScores[pKey] === undefined) cumulativeScores[pKey] = 0;
+          
           const badge = document.createElement('span');
           badge.className = 'px-3 py-1 bg-pink-100 text-pink-950 text-xs font-extrabold rounded-full shadow-sm';
-          badge.innerText = p.name;
+          badge.innerText = players[pKey].name;
           playerList.appendChild(badge);
         });
 
@@ -515,38 +455,23 @@
 
     function startGame() {
       currentItemIndex = 0;
-      cumulativeScores = {};
+      currentLoneWolfKeys = [];
       loadItemStage(currentItemIndex);
     }
 
-    function startTimerAndGameState(index, options) {
+    function startGameStage(index, options) {
       db.ref(`games/${currentGamePin}/answers`).remove();
-      questionStartTime = Date.now();
 
       db.ref(`games/${currentGamePin}/state`).set({
         status: 'guessing',
         currentIndex: index,
-        options: options,
-        timeExpired: false
+        options: options
       });
 
       db.ref(`games/${currentGamePin}/answers`).on('value', snapshot => {
         const answers = snapshot.val() || {};
         document.getElementById('submittedCount').innerText = Object.keys(answers).length;
       });
-
-      // 20-second countdown timer
-      let timeLeft = 20;
-      document.getElementById('timerDisplay').innerText = timeLeft;
-      clearInterval(timerInterval);
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        document.getElementById('timerDisplay').innerText = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          db.ref(`games/${currentGamePin}/state/timeExpired`).set(true);
-        }
-      }, 1000);
     }
 
     function loadItemStage(index) {
@@ -554,84 +479,77 @@
       document.getElementById('hostGameScreen').classList.remove('hidden');
 
       const q = questionsDeck[index];
-      document.getElementById('questionBadge').innerText = `Question ${index + 1} / 10`;
+      document.getElementById('questionBadge').innerText = `Round ${index + 1}`;
       document.getElementById('hostQuestionTitle').innerText = q.title;
 
-      const imgEl = document.getElementById('revealImg');
-      const videoEl = document.getElementById('gameVideo');
+      const optsDisplay = document.getElementById('hostOptionsDisplay');
+      optsDisplay.innerHTML = '';
+      q.options.forEach((optText, optIdx) => {
+        const badge = document.createElement('div');
+        badge.className = 'px-4 py-2 bg-white text-pink-900 border-2 border-pink-300 rounded-xl font-bold text-lg shadow-sm';
+        badge.innerHTML = `<span class="bg-pink-100 text-pink-800 px-2 py-1 rounded text-sm mr-2">${String.fromCharCode(65 + optIdx)}</span> ${optText}`;
+        optsDisplay.appendChild(badge);
+      });
 
-      clearInterval(timerInterval);
-      clearInterval(revealAnimInterval);
-      document.getElementById('timerDisplay').innerText = "20";
-
-      if (q.type === "reveal") {
-        videoEl.classList.add('hidden');
-        imgEl.classList.remove('hidden');
-        imgEl.src = q.img;
-        
-        // Accelerated Unblur & Zoom-Out effect (~10 sec full reveal)
-        let blurVal = 25;
-        let scaleVal = 3.0;
-        imgEl.style.filter = `blur(${blurVal}px)`;
-        imgEl.style.transform = `scale(${scaleVal})`;
-
-        revealAnimInterval = setInterval(() => {
-          blurVal = Math.max(0, blurVal - 2.5);
-          scaleVal = Math.max(1.0, scaleVal - 0.2);
-          imgEl.style.filter = `blur(${blurVal}px)`;
-          imgEl.style.transform = `scale(${scaleVal})`;
-          if (blurVal <= 0 && scaleVal <= 1.0) clearInterval(revealAnimInterval);
-        }, 1000);
-
-        startTimerAndGameState(index, q.options);
-
-      } else {
-        imgEl.classList.add('hidden');
-        videoEl.classList.remove('hidden');
-        videoEl.muted = false; // Audio enabled
-        videoEl.src = q.video;
-
-        // Only start timer once the video file is loaded and playing
-        videoEl.onloadeddata = () => {
-          videoEl.play().catch(()=>{});
-          startTimerAndGameState(index, q.options);
-        };
-      }
+      startGameStage(index, q.options);
     }
 
     function revealAnswer() {
-      clearInterval(timerInterval);
-      clearInterval(revealAnimInterval);
-
       hideAllScreens();
       document.getElementById('hostRevealScreen').classList.remove('hidden');
-      document.getElementById('roundNumDisplay').innerText = currentItemIndex + 1;
 
       const q = questionsDeck[currentItemIndex];
-      const correctAnsText = q.options[q.correctIndex];
-      document.getElementById('correctAnswerDisplay').innerText = correctAnsText;
-
-      const resImg = document.getElementById('revealResultImg');
-      const resVideo = document.getElementById('revealResultVideo');
-
-      if (q.type === "reveal") {
-        resVideo.classList.add('hidden');
-        resImg.classList.remove('hidden');
-        resImg.src = q.img;
-      } else {
-        resImg.classList.add('hidden');
-        resVideo.classList.remove('hidden');
-        resVideo.muted = false; // Unmuted audio for reveal video
-        resVideo.src = q.revealVideo;
-        resVideo.play().catch(()=>{});
-      }
+      document.getElementById('revealQuestionTitle').innerText = q.title;
 
       db.ref(`games/${currentGamePin}`).once('value', snapshot => {
         const data = snapshot.val() || {};
         const players = data.players || {};
         const answers = data.answers || {};
 
+        // 1. Tally Votes and track who voted for what
+        let voteCounts = {};
+        let optionVoters = {};
+        q.options.forEach((_, i) => { 
+          voteCounts[i] = 0; 
+          optionVoters[i] = []; 
+        });
+        
+        let totalVotes = 0;
+
+        Object.keys(players).forEach(pKey => {
+          const playerName = players[pKey].name;
+          const pAns = answers[pKey];
+          if (pAns && pAns.selectedIndex !== undefined) {
+            voteCounts[pAns.selectedIndex]++;
+            optionVoters[pAns.selectedIndex].push(playerName);
+            totalVotes++;
+          }
+        });
+
+        // 2. Find Majority & Lone Wolves
+        let maxVotes = 0;
+        Object.values(voteCounts).forEach(v => {
+          if (v > maxVotes) maxVotes = v;
+        });
+
+        let majorityIndices = [];
+        let optionIndicesWithOneVote = [];
+        
+        if (maxVotes > 0) {
+          Object.keys(voteCounts).forEach(idx => {
+            const intIdx = parseInt(idx);
+            if (voteCounts[idx] === maxVotes) majorityIndices.push(intIdx);
+            
+            // To be a lone wolf option: exactly 1 vote, AND it cannot be the majority (prevents 1-player bugs)
+            if (voteCounts[idx] === 1 && maxVotes > 1) {
+              optionIndicesWithOneVote.push(intIdx);
+            }
+          });
+        }
+
+        // 3. Process Player Scores and Lone Wolf Stigma
         let roundList = [];
+        let newlyStigmatizedKeys = [];
 
         Object.keys(players).forEach(pKey => {
           const playerName = players[pKey].name;
@@ -639,73 +557,151 @@
 
           if (!pAns) {
             roundList.push({ key: pKey, name: playerName, points: 0, reason: "No Answer" });
-          } else if (pAns.selectedIndex !== q.correctIndex) {
-            roundList.push({ key: pKey, name: playerName, points: 0, reason: "Incorrect" });
           } else {
-            let timeTakenSec = (pAns.timestamp - questionStartTime) / 1000;
-            let timeRatio = Math.max(0, 1 - (timeTakenSec / 20));
-            let pts = Math.round(500 + (500 * timeRatio));
+            // Check for points
+            if (majorityIndices.includes(pAns.selectedIndex)) {
+              const pts = 1; 
+              cumulativeScores[pKey] = (cumulativeScores[pKey] || 0) + pts;
+              roundList.push({ key: pKey, name: playerName, points: pts, total: cumulativeScores[pKey], reason: "Herd" });
+            } else {
+              roundList.push({ key: pKey, name: playerName, points: 0, total: cumulativeScores[pKey], reason: "Minority" });
+            }
 
-            cumulativeScores[playerName] = (cumulativeScores[playerName] || 0) + pts;
-            roundList.push({ key: pKey, name: playerName, points: pts, total: cumulativeScores[playerName] });
+            // Check if they are the lone wolf this round
+            if (optionIndicesWithOneVote.includes(pAns.selectedIndex)) {
+              newlyStigmatizedKeys.push(pKey);
+            }
           }
         });
 
-        // 1. TOP 5 ROUND STANDINGS
-        let roundSorted = [...roundList].sort((a, b) => b.points - a.points);
-        const roundLb = document.getElementById('roundLeaderboardList');
-        roundLb.innerHTML = '';
+        // Pass the token!
+        if (newlyStigmatizedKeys.length > 0) {
+          currentLoneWolfKeys = newlyStigmatizedKeys;
+        }
 
-        roundSorted.slice(0, 5).forEach((s, idx) => {
+        // 4. Render Bar Charts and show who voted for what
+        const resultsContainer = document.getElementById('voteResultsContainer');
+        resultsContainer.innerHTML = '';
+        
+        q.options.forEach((optText, idx) => {
+          const votes = voteCounts[idx] || 0;
+          const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+          const isMajority = majorityIndices.includes(idx);
+          const votersForThisOption = optionVoters[idx];
+          
           const row = document.createElement('div');
-          const isWrong = s.points === 0;
-          row.className = `flex justify-between items-center p-3 rounded-xl border text-sm ${isWrong ? 'bg-red-50/80 border-red-200' : 'bg-white border-pink-100 shadow-sm'}`;
+          row.className = 'w-full bg-pink-900/40 rounded-xl p-3 border border-pink-700/50 flex flex-col space-y-2';
+          
+          const barColor = isMajority ? 'bg-pink-500' : 'bg-pink-800/50';
+          
+          let badgesHtml = '';
+          if (votersForThisOption.length > 0) {
+            badgesHtml = `<div class="flex flex-wrap gap-2 mt-2">` + 
+              votersForThisOption.map(name => `<span class="px-2 py-1 bg-black/30 text-white rounded text-xs">${name}</span>`).join('') + 
+              `</div>`;
+          } else {
+            badgesHtml = `<div class="text-xs text-gray-500 mt-2 italic">No votes</div>`;
+          }
+
           row.innerHTML = `
-            <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black ${isWrong ? 'text-red-500' : 'text-pink-800'}">#${idx + 1}</span>
-              <span class="font-bold text-gray-900 truncate max-w-[140px]">${s.name}</span>
+            <div class="relative w-full flex justify-between items-center overflow-hidden rounded p-2">
+              <div class="absolute top-0 left-0 h-full ${barColor} vote-bar opacity-40 rounded" style="width: 0%"></div>
+              <div class="relative z-10 flex items-center gap-3">
+                <span class="w-8 h-8 rounded-full bg-black/30 flex items-center justify-center font-bold text-sm">${String.fromCharCode(65 + idx)}</span>
+                <span class="font-bold text-lg ${isMajority ? 'text-white' : 'text-gray-300'}">${optText}</span>
+              </div>
+              <div class="relative z-10 font-black text-xl ${isMajority ? 'text-white' : 'text-gray-400'}">
+                ${votes} <span class="text-xs font-normal">votes</span> (${percentage}%)
+              </div>
             </div>
-            <span class="font-black text-base ${isWrong ? 'text-red-600' : 'text-pink-900'}">${s.points > 0 ? '+' + s.points + ' pts' : '0 pts'}</span>
+            ${badgesHtml}
           `;
-          roundLb.appendChild(row);
+          resultsContainer.appendChild(row);
+          
+          // Trigger animation shortly after mount
+          setTimeout(() => {
+            const bar = row.querySelector('.vote-bar');
+            if (bar) bar.style.width = `${percentage}%`;
+          }, 100);
         });
 
-        // 2. TOP 5 OVERALL STANDINGS
-        let overallSorted = [...roundList].sort((a, b) => (cumulativeScores[b.name]||0) - (cumulativeScores[a.name]||0));
+        // 5. Update Majority Text
+        const majorityDisplay = document.getElementById('majorityDisplay');
+        if (totalVotes === 0) {
+          majorityDisplay.innerText = "No votes cast!";
+        } else if (majorityIndices.length > 1) {
+          const tiedAnswers = majorityIndices.map(i => q.options[i]).join(" & ");
+          majorityDisplay.innerText = `It's a Tie! (${tiedAnswers})`;
+        } else {
+          majorityDisplay.innerText = q.options[majorityIndices[0]];
+        }
+
+        // 6. TOP ROUND STANDINGS (Anyone who got points)
+        let roundSorted = [...roundList].filter(r => r.points > 0).sort((a, b) => b.points - a.points);
+        const roundLb = document.getElementById('roundLeaderboardList');
+        roundLb.innerHTML = '';
+        
+        if (roundSorted.length === 0) {
+          roundLb.innerHTML = '<p class="text-gray-500 text-sm italic">No one scored points this round.</p>';
+        } else {
+          roundSorted.forEach((s) => {
+            const isWolf = currentLoneWolfKeys.includes(s.key);
+            const row = document.createElement('div');
+            row.className = `flex justify-between items-center p-2 rounded-lg border text-sm bg-white border-pink-100 shadow-sm`;
+            row.innerHTML = `
+              <div class="flex items-center space-x-2">
+                <span class="text-lg">🐑</span>
+                <span class="font-bold text-gray-900 truncate max-w-[140px]">${s.name} ${isWolf ? '🐺' : ''}</span>
+              </div>
+              <span class="font-black text-sm text-pink-900">+${s.points}</span>
+            `;
+            roundLb.appendChild(row);
+          });
+        }
+
+        // 7. TOP 5 OVERALL STANDINGS & Check for Game Over (First to 10)
+        let overallSorted = [...roundList].sort((a, b) => (cumulativeScores[b.key]||0) - (cumulativeScores[a.key]||0));
         const overallLb = document.getElementById('overallLeaderboardList');
         overallLb.innerHTML = '';
 
+        let highestScore = 0;
         let playerRankMap = {};
-
+        
         overallSorted.forEach((s, idx) => {
-          let roundRank = roundSorted.findIndex(r => r.key === s.key) + 1;
+          const sTotal = cumulativeScores[s.key] || 0;
+          if (sTotal > highestScore) highestScore = sTotal;
 
+          const isWolf = currentLoneWolfKeys.includes(s.key);
           playerRankMap[s.key] = {
-            roundRank: roundRank,
             overallRank: idx + 1,
             points: s.points,
-            total: cumulativeScores[s.name] || 0,
+            total: sTotal,
+            isLoneWolf: isWolf,
+            isNewWolf: newlyStigmatizedKeys.includes(s.key),
             reason: s.reason || null
           };
         });
 
         overallSorted.slice(0, 5).forEach((s, idx) => {
+          const isWolf = currentLoneWolfKeys.includes(s.key);
           const row = document.createElement('div');
           row.className = `flex justify-between items-center p-3 rounded-xl border text-sm bg-white border-pink-200 shadow-sm`;
           row.innerHTML = `
             <div class="flex items-center space-x-3">
               <span class="w-6 text-center font-black text-pink-800">#${idx + 1}</span>
-              <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name}</span>
+              <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name} ${isWolf ? '🐺' : ''}</span>
             </div>
-            <span class="font-black text-base text-pink-950">${cumulativeScores[s.name] || 0} pts</span>
+            <span class="font-black text-base text-pink-950">${cumulativeScores[s.key] || 0} pts</span>
           `;
           overallLb.appendChild(row);
         });
 
         const nextBtn = document.getElementById('nextBtn');
-        if (currentItemIndex === questionsDeck.length - 1) {
+        if (highestScore >= 10 || currentItemIndex >= questionsDeck.length - 1) {
+          nextBtn.onclick = showFinalLeaderboard;
           nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-2"></i>';
         } else {
+          nextBtn.onclick = nextQuestion;
           nextBtn.innerHTML = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
         }
 
@@ -733,31 +729,48 @@
 
       db.ref(`games/${currentGamePin}/state`).set({ status: 'gameover' });
 
-      const finalRankings = Object.keys(cumulativeScores).map(name => ({
-        name: name,
-        score: cumulativeScores[name]
-      })).sort((a, b) => b.score - a.score);
+      db.ref(`games/${currentGamePin}/players`).once('value', snapshot => {
+        const playersData = snapshot.val() || {};
 
-      const finalLb = document.getElementById('finalLeaderboardList');
-      finalLb.innerHTML = '';
+        const finalRankings = Object.keys(cumulativeScores).map(pKey => ({
+          key: pKey,
+          name: playersData[pKey] ? playersData[pKey].name : 'Unknown',
+          score: cumulativeScores[pKey],
+          isWolf: currentLoneWolfKeys.includes(pKey)
+        })).sort((a, b) => {
+          // Lone wolves are sent to the bottom regardless of score
+          if (a.isWolf && !b.isWolf) return 1;
+          if (!a.isWolf && b.isWolf) return -1;
+          return b.score - a.score;
+        });
 
-      finalRankings.forEach((r, idx) => {
-        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-        const cardStyle = idx === 0 ? 'bg-pink-200 border-pink-400' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-pink-100 border-pink-200' : 'bg-pink-50 border-pink-100';
+        const finalLb = document.getElementById('finalLeaderboardList');
+        finalLb.innerHTML = '';
 
-        const row = document.createElement('div');
-        row.className = `flex justify-between items-center p-4 rounded-xl border-2 ${cardStyle}`;
-        row.innerHTML = `
-          <div class="flex items-center space-x-4">
-            <span class="text-2xl font-black">${medal}</span>
-            <span class="text-lg font-black text-gray-900">${r.name}</span>
-          </div>
-          <span class="text-xl font-black text-pink-950">${r.score} PTS</span>
-        `;
-        finalLb.appendChild(row);
+        finalRankings.forEach((r, idx) => {
+          let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
+          let cardStyle = idx === 0 ? 'bg-pink-200 border-pink-400' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-pink-100 border-pink-200' : 'bg-pink-50 border-pink-100';
+
+          if (r.isWolf) {
+            medal = '🐺';
+            cardStyle = 'bg-red-100 border-red-400 opacity-80'; 
+          }
+
+          const row = document.createElement('div');
+          row.className = `flex justify-between items-center p-4 rounded-xl border-2 ${cardStyle}`;
+          row.innerHTML = `
+            <div class="flex items-center space-x-4">
+              <span class="text-2xl font-black">${medal}</span>
+              <span class="text-lg font-black text-gray-900 ${r.isWolf ? 'line-through' : ''}">${r.name}</span>
+              ${r.isWolf ? '<span class="text-xs font-bold text-red-700 bg-red-200 px-2 py-1 rounded">DISQUALIFIED</span>' : ''}
+            </div>
+            <span class="text-xl font-black ${r.isWolf ? 'text-red-800' : 'text-pink-950'}">${r.score} PTS</span>
+          `;
+          finalLb.appendChild(row);
+        });
+
+        try { confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } }); } catch(e){}
       });
-
-      try { confetti({ particleCount: 250, spread: 120, origin: { y: 0.5 } }); } catch(e){}
     }
 
     // --- PLAYER LOGIC ---
@@ -810,28 +823,20 @@
           }
 
           if (!hasSubmittedCurrentRound) {
-            if (state.timeExpired) {
-              hideAllScreens();
-              document.getElementById('playerLockedScreen').classList.remove('hidden');
-              document.getElementById('lockedHeader').innerText = "Time's Up!";
-              document.getElementById('lockedChoiceDisplay').innerText = "No Choice Made";
-              document.getElementById('lockedSubtext').innerText = "Timer expired before an option was tapped.";
-            } else {
-              hideAllScreens();
-              document.getElementById('playerInputScreen').classList.remove('hidden');
-              document.getElementById('playerQBadge').innerText = `Question ${state.currentIndex + 1} / 10`;
+            hideAllScreens();
+            document.getElementById('playerInputScreen').classList.remove('hidden');
+            document.getElementById('playerQBadge').innerText = `Round ${state.currentIndex + 1}`;
 
-              const container = document.getElementById('mcqOptionsContainer');
-              container.innerHTML = '';
+            const container = document.getElementById('mcqOptionsContainer');
+            container.innerHTML = '';
 
-              (state.options || []).forEach((optText, optIdx) => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full py-4 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-lg rounded-xl shadow-md border-2 border-pink-200 active:scale-95 transition text-left px-5 flex items-center justify-between';
-                btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold">${String.fromCharCode(65 + optIdx)}</span>`;
-                btn.onclick = () => submitMCQChoice(optIdx, optText);
-                container.appendChild(btn);
-              });
-            }
+            (state.options || []).forEach((optText, optIdx) => {
+              const btn = document.createElement('button');
+              btn.className = 'w-full py-4 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-lg rounded-xl shadow-md border-2 border-pink-200 active:scale-95 transition text-left px-5 flex items-center justify-between';
+              btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-7 h-7 flex items-center justify-center rounded-full text-xs font-bold">${String.fromCharCode(65 + optIdx)}</span>`;
+              btn.onclick = () => submitMCQChoice(optIdx, optText);
+              container.appendChild(btn);
+            });
           }
         } else if (state.status === 'revealed') {
           hideAllScreens();
@@ -839,18 +844,32 @@
           
           if (state.ranks && state.ranks[playerKey]) {
             const myData = state.ranks[playerKey];
-            document.getElementById('playerRoundRankDisplay').innerText = `#${myData.roundRank}`;
             document.getElementById('playerOverallRankDisplay').innerText = `#${myData.overallRank}`;
-            document.getElementById('playerRoundPts').innerText = `+${myData.points} pts`;
-            document.getElementById('playerTotalPts').innerText = `${myData.total} total pts`;
+            document.getElementById('playerRoundPts').innerText = `+${myData.points} pt(s)`;
 
+            const iconDisplay = document.getElementById('playerRoundIconDisplay');
             const noticeEl = document.getElementById('playerResultNotice');
+            
             if (myData.reason === "No Answer") {
-              noticeEl.innerText = "⚠️ No choice was submitted in time.";
-            } else if (myData.reason === "Incorrect") {
-              noticeEl.innerText = "❌ Incorrect option chosen! 0 points.";
+              iconDisplay.innerText = "⏳";
+              noticeEl.className = "text-sm font-bold text-gray-600 bg-gray-50 p-3 rounded-xl border border-gray-200";
+              noticeEl.innerText = "No choice was submitted.";
+            } else if (myData.isNewWolf) {
+              iconDisplay.innerText = "🐺";
+              noticeEl.className = "text-sm font-bold text-red-700 bg-red-50 p-3 rounded-xl border border-red-300";
+              noticeEl.innerText = "NEW LONE WOLF! You took the stigma because you were the only one who picked your option.";
+            } else if (myData.isLoneWolf) {
+              iconDisplay.innerText = "🐺";
+              noticeEl.className = "text-sm font-bold text-red-700 bg-red-50 p-3 rounded-xl border border-red-300";
+              noticeEl.innerText = "LONE WOLF STIGMA: You cannot win unless someone else takes the stigma.";
+            } else if (myData.reason === "Minority") {
+              iconDisplay.innerText = "❌";
+              noticeEl.className = "text-sm font-bold text-orange-700 bg-orange-50 p-3 rounded-xl border border-orange-200";
+              noticeEl.innerText = "You went against the herd. 0 pts.";
             } else {
-              noticeEl.innerText = "🎉 Correct answer! Speed bonus awarded.";
+              iconDisplay.innerText = "🐑";
+              noticeEl.className = "text-sm font-bold text-green-700 bg-green-50 p-3 rounded-xl border border-green-200";
+              noticeEl.innerText = "You went with the herd! +1 pt.";
             }
           }
         } else if (state.status === 'gameover') {
@@ -862,15 +881,14 @@
 
     function submitMCQChoice(optIdx, optText) {
       db.ref(`games/${currentGamePin}/answers/${playerKey}`).set({
-        selectedIndex: optIdx,
-        timestamp: Date.now()
+        selectedIndex: optIdx
       }).then(() => {
         hasSubmittedCurrentRound = true;
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
         document.getElementById('lockedHeader').innerText = "Answer Locked!";
         document.getElementById('lockedChoiceDisplay').innerText = optText;
-        document.getElementById('lockedSubtext').innerText = "Look up at the main screen for results!";
+        document.getElementById('lockedSubtext').innerText = "Waiting for the host to reveal the results...";
       });
     }
   </script>
