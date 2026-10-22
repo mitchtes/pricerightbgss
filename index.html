@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Herd Mentality</title>
+  <title>The Price Is Right - FairPrice Live Edition</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Standard Firebase Compatibility SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+  <!-- Firebase App & Realtime Database SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- FontAwesome Icons -->
@@ -18,62 +18,52 @@
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap');
     body {
       font-family: 'Montserrat', sans-serif;
-      background: linear-gradient(135deg, #A01A4A 0%, #C2185B 50%, #D81B60 100%);
+      background-color: #46178f;
       color: #ffffff;
       min-height: 100vh;
-      overflow-x: hidden;
     }
-    .game-card {
-      background: rgba(255, 255, 255, 0.98);
-      color: #1a1a1a;
-      border-radius: 1.5rem;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    .kahoot-card {
+      background: rgba(255, 255, 255, 0.95);
+      color: #333333;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
     .pulse-btn {
       animation: pulse 2s infinite;
     }
     @keyframes pulse {
       0% { transform: scale(1); }
-      50% { transform: scale(1.02); }
+      50% { transform: scale(1.03); }
       100% { transform: scale(1); }
-    }
-    .vote-bar {
-      transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .maroon-panel {
-      background-color: #4A0E22;
     }
   </style>
 </head>
-<body class="flex flex-col justify-between min-h-screen p-2 md:p-4 text-white">
+<body class="flex flex-col justify-between min-h-screen p-4">
 
   <!-- Header Bar -->
-  <header class="flex justify-between items-center bg-black/20 backdrop-blur-md p-3 rounded-2xl mb-2 border border-white/10 shadow-sm shrink-0">
+  <header class="flex justify-between items-center bg-purple-900/80 backdrop-blur p-4 rounded-xl mb-4 border border-purple-500/30">
     <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center text-white text-xl shadow-inner">
-        <i class="fa-solid fa-users"></i>
-      </div>
+      <span class="text-3xl">🛒</span>
       <div>
-        <h1 class="text-xl md:text-2xl font-black tracking-wider text-white leading-none">HERD MENTALITY</h1>
-        <p class="text-xs text-pink-200 font-semibold tracking-wide mt-0.5">Think like the crowd</p>
+        <h1 class="text-xl md:text-2xl font-black tracking-wider text-yellow-400">THE PRICE IS RIGHT</h1>
+        <p class="text-xs text-purple-200">NTUC FairPrice Live Edition</p>
       </div>
     </div>
-    <div id="pinDisplay" class="hidden text-right bg-black/30 px-5 py-1.5 rounded-xl border border-white/10">
-      <span class="text-[10px] uppercase text-pink-300 font-bold tracking-widest block leading-tight">Game PIN</span>
-      <span id="pinValue" class="text-2xl md:text-3xl font-black text-white tracking-widest drop-shadow-md leading-tight">----</span>
+    <div id="pinDisplay" class="hidden text-right">
+      <span class="text-xs uppercase text-purple-300 font-bold tracking-widest block">Game PIN</span>
+      <span id="pinValue" class="text-2xl md:text-3xl font-black text-yellow-300 tracking-wider">----</span>
     </div>
   </header>
 
   <!-- SCREEN 1: ROLE SELECTION -->
-  <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-4 text-center">
-    <div class="game-card p-6">
-      <h2 class="text-2xl font-extrabold mb-1 text-pink-950">Welcome!</h2>
-      <p class="text-sm text-pink-700 font-semibold mb-5">Select your role to begin</p>
-      <div class="space-y-3">
-        <button onclick="initHost()" class="w-full py-3 bg-pink-800 hover:bg-pink-900 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+  <div id="roleScreen" class="max-w-md mx-auto my-auto w-full space-y-6 text-center">
+    <div class="kahoot-card p-8">
+      <h2 class="text-2xl font-extrabold mb-6 text-purple-900">Choose Your Mode</h2>
+      <div class="space-y-4">
+        <button onclick="initHost()" class="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
           <i class="fa-solid fa-desktop mr-2"></i> HOST GAME (Projector)
         </button>
-        <button onclick="initPlayer()" class="w-full py-3 bg-pink-600 hover:bg-pink-700 text-white font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
+        <button onclick="initPlayer()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-purple-950 font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
           <i class="fa-solid fa-mobile-screen mr-2"></i> JOIN GAME (Phone)
         </button>
       </div>
@@ -81,184 +71,76 @@
   </div>
 
   <!-- SCREEN 2: HOST LOBBY -->
-  <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-4 text-center">
-    <div class="game-card p-6 md:p-8">
+  <div id="hostLobbyScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="kahoot-card p-6 md:p-8">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div class="flex flex-col items-center justify-center p-4 bg-pink-50 rounded-2xl border-2 border-pink-100">
-          <p class="text-sm font-black text-pink-900 mb-2">Scan QR Code to Join:</p>
-          <img id="qrCodeImg" class="w-48 h-48 rounded-xl shadow-md border-4 border-white" src="" alt="QR Code">
-          <p class="text-xs font-bold text-gray-500 mt-3">or visit URL and enter PIN</p>
+        <div class="flex flex-col items-center justify-center p-4 bg-purple-50 rounded-xl">
+          <p class="text-sm font-bold text-purple-800 mb-2">Scan QR Code on Phone to Join:</p>
+          <img id="qrCodeImg" class="w-56 h-56 rounded-lg shadow border-4 border-white" src="" alt="QR Code">
+          <p class="text-xs font-semibold text-gray-500 mt-2">or visit this URL and enter PIN</p>
         </div>
         <div class="space-y-4 text-left">
-          <div class="bg-pink-100 p-4 rounded-2xl border border-pink-200 shadow-inner">
-            <span class="text-xs font-black text-pink-800 uppercase tracking-widest">Players Joined</span>
-            <div class="text-5xl font-black text-pink-950 mt-1" id="lobbyPlayerCount">0</div>
+          <div class="bg-purple-100 p-4 rounded-xl border border-purple-200">
+            <span class="text-xs font-bold text-purple-600 uppercase tracking-widest">Players Joined</span>
+            <div class="text-5xl font-black text-purple-900 mt-1" id="lobbyPlayerCount">0</div>
           </div>
-          <p class="text-xs text-gray-600 font-semibold">Wait for all participants to join before starting.</p>
-          <button onclick="showRulesBeforeGame()" class="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-black text-xl rounded-xl shadow-lg pulse-btn">
-            <i class="fa-solid fa-play mr-2"></i> START GAME
+          <p class="text-xs text-gray-500">Wait for participants to join before starting.</p>
+          <button onclick="startGame()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black text-xl rounded-xl shadow-lg pulse-btn">
+            <i class="fa-solid fa-play mr-2"></i> START GAME NOW
           </button>
         </div>
       </div>
-      <hr class="my-5 border-gray-200 border-2 rounded-full">
-      <h3 class="text-sm font-black text-gray-500 uppercase tracking-widest mb-3 text-left">Live Player Roster</h3>
-      <div id="playerList" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-1"></div>
+      <hr class="my-6 border-gray-200">
+      <h3 class="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 text-left">Live Player Roster</h3>
+      <div id="playerList" class="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2">
+        <!-- Player Badges dynamic -->
+      </div>
     </div>
   </div>
 
-  <!-- SCREEN 2B: FULL-PAGE GAME RULES -->
-  <div id="rulesScreen" class="hidden w-full max-w-5xl mx-auto my-auto p-2 md:p-4 flex-1 flex flex-col justify-center">
-    <div class="game-card p-6 md:p-10 space-y-6 text-center flex-1 flex flex-col justify-between">
-      <div>
-        <span class="text-5xl mb-2 block drop-shadow-sm">🐑</span>
-        <h2 class="text-3xl md:text-5xl font-black text-pink-950 tracking-tight">HOW TO PLAY</h2>
-        <p class="text-sm font-bold text-pink-600 uppercase tracking-widest mt-2">Herd Mentality Rules</p>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 my-auto text-left">
-        <div class="flex items-start space-x-4 bg-pink-50 p-4 rounded-xl border-2 border-pink-100">
-          <span class="bg-pink-800 text-white text-xl font-black w-10 h-10 flex items-center justify-center rounded-lg shrink-0 shadow-sm">1</span>
-          <div>
-            <h3 class="text-lg font-black text-pink-900 mb-1">Join the Herd</h3>
-            <p class="text-sm text-gray-700 font-medium leading-snug">Your goal is to guess what the MAJORITY of the room will pick. If your answer is in the majority, you score 1 point.</p>
-          </div>
+  <!-- SCREEN 3: HOST GAME STAGE -->
+  <div id="hostGameScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6">
+    <div class="kahoot-card p-6 md:p-8">
+      <div class="flex flex-col md:flex-row gap-6 items-center">
+        <div id="itemIcon" class="text-7xl p-6 bg-purple-100 rounded-2xl border-2 border-purple-200 flex items-center justify-center">
+          🍌
         </div>
-
-        <div class="flex items-start space-x-4 bg-pink-50 p-4 rounded-xl border-2 border-pink-100">
-          <span class="bg-pink-800 text-white text-xl font-black w-10 h-10 flex items-center justify-center rounded-lg shrink-0 shadow-sm">2</span>
-          <div>
-            <h3 class="text-lg font-black text-pink-900 mb-1">The Lone Wolf Stigma</h3>
-            <p class="text-sm text-gray-700 font-medium leading-snug">If you are the ONLY person in the room to pick an option, you receive the <b>Lone Wolf Stigma 🐺</b>.</p>
-          </div>
+        <div class="flex-1 space-y-2 text-center md:text-left">
+          <span id="itemCategory" class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full uppercase">Category</span>
+          <h2 id="itemName" class="text-2xl md:text-3xl font-black text-gray-900">Item Name</h2>
+          <p id="itemDesc" class="text-sm text-gray-600">Short description of the NTUC FairPrice product.</p>
         </div>
-
-        <div class="flex items-start space-x-4 bg-pink-50 p-4 rounded-xl border-2 border-pink-100">
-          <span class="bg-pink-800 text-white text-xl font-black w-10 h-10 flex items-center justify-center rounded-lg shrink-0 shadow-sm">3</span>
-          <div>
-            <h3 class="text-lg font-black text-pink-900 mb-1">Passing the Stigma</h3>
-            <p class="text-sm text-gray-700 font-medium leading-snug">The Stigma stays with you until someone else becomes the new Lone Wolf. If you hold the Stigma at the end of the game, <b>you cannot win</b>.</p>
-          </div>
-        </div>
-
-        <div class="flex items-start space-x-4 bg-pink-50 p-4 rounded-xl border-2 border-pink-100">
-          <span class="bg-pink-800 text-white text-xl font-black w-10 h-10 flex items-center justify-center rounded-lg shrink-0 shadow-sm">4</span>
-          <div>
-            <h3 class="text-lg font-black text-pink-900 mb-1">Winning the Game</h3>
-            <p class="text-sm text-gray-700 font-medium leading-snug">There is no time limit for voting. The game ends immediately when a player reaches <b>10 points</b>.</p>
-          </div>
+        <div class="bg-purple-900 text-white p-4 rounded-xl text-center min-w-[120px]">
+          <span class="text-xs text-purple-300 block font-bold uppercase">Time Left</span>
+          <span id="timerDisplay" class="text-4xl font-black text-yellow-400">20</span>
         </div>
       </div>
 
-      <div>
-        <button onclick="startGame()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl rounded-xl shadow-xl pulse-btn transform active:scale-95 transition">
-          UNDERSTOOD, LET'S BEGIN! <i class="fa-solid fa-arrow-right ml-3"></i>
+      <div class="mt-8 bg-gray-100 p-4 rounded-xl flex justify-between items-center">
+        <div class="text-sm font-bold text-gray-700">
+          Guesses Received: <span id="submittedCount" class="text-purple-700 text-lg">0</span> / <span id="totalPlayersCount">0</span>
+        </div>
+        <button onclick="revealAnswer()" class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow text-sm">
+          <i class="fa-solid fa-eye mr-1"></i> Lock & Reveal
         </button>
       </div>
     </div>
   </div>
 
-  <!-- SCREEN 3: HOST GAME STAGE (Voting) -->
-  <div id="hostGameScreen" class="hidden w-full max-w-[90vw] mx-auto my-auto space-y-4">
-    <div class="game-card p-6 md:p-8">
-      <div class="flex justify-between items-center mb-6">
-        <span id="questionBadge" class="px-5 py-2 bg-pink-100 text-pink-900 font-black rounded-full text-base uppercase tracking-widest shadow-sm">Round 1</span>
-        <div class="bg-pink-900 text-white px-5 py-2 rounded-full shadow-md border border-pink-700 flex items-center space-x-2">
-          <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-          <span class="text-xs font-black uppercase tracking-widest">Voting Open</span>
-        </div>
+  <!-- SCREEN 4: HOST REVEAL & LEADERBOARD -->
+  <div id="hostRevealScreen" class="hidden max-w-4xl mx-auto w-full my-auto space-y-6 text-center">
+    <div class="kahoot-card p-6 md:p-8 space-y-6">
+      <div class="bg-yellow-400 text-purple-950 p-6 rounded-2xl shadow-inner">
+        <span class="text-xs font-extrabold uppercase tracking-widest block opacity-75">Actual NTUC FairPrice Price</span>
+        <div id="actualPriceDisplay" class="text-5xl md:text-6xl font-black mt-1">$0.00</div>
       </div>
 
-      <div class="py-10 flex flex-col items-center justify-center bg-pink-50/50 rounded-2xl border-4 border-pink-100 px-6 text-center space-y-8 shadow-inner">
-        <h2 id="hostQuestionTitle" class="text-4xl md:text-5xl font-black text-pink-950 leading-tight drop-shadow-sm">Question goes here?</h2>
-        <div id="hostOptionsDisplay" class="flex flex-wrap justify-center gap-4 w-full mt-2">
-            <!-- Options populated by JS -->
-        </div>
-      </div>
+      <h3 class="text-lg font-bold text-gray-700 uppercase tracking-wider">Top Leaderboard</h3>
+      <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto text-left"></div>
 
-      <div class="mt-6 bg-pink-50 border-2 border-pink-100 p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
-        <div class="text-center md:text-left flex items-center space-x-4">
-          <div class="bg-pink-100 w-12 h-12 rounded-xl flex items-center justify-center text-2xl text-pink-700 shadow-inner">
-            <i class="fa-solid fa-mobile-screen"></i>
-          </div>
-          <div>
-            <span class="text-[10px] font-black text-pink-800 uppercase tracking-widest block leading-tight">Live Submissions</span>
-            <div class="text-3xl font-black text-pink-950 mt-0.5 leading-tight">
-              <span id="submittedCount" class="text-pink-600">0</span> <span class="text-xl text-gray-400">/</span> <span id="totalPlayersCount" class="text-2xl text-gray-500">0</span>
-            </div>
-          </div>
-        </div>
-        <button onclick="revealAnswer()" class="w-full md:w-auto px-8 py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-xl rounded-xl shadow-lg pulse-btn transition">
-          <i class="fa-solid fa-lock mr-2"></i> LOCK & REVEAL
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN 4: HOST REVEAL & DUAL-COLUMN LEADERBOARD -->
-  <!-- WIDENED TO MAXIMIZE TV SPACE AND HEIGHT-RESTRICTED TO PREVENT SCROLL -->
-  <div id="hostRevealScreen" class="hidden w-full max-w-[96vw] mx-auto my-auto space-y-4 text-center">
-    <div class="game-card p-4 md:p-6 space-y-4 shadow-2xl flex flex-col">
-      
-      <!-- Maroon Vote Tally Reveal Container -->
-      <div class="maroon-panel text-white p-5 md:p-6 rounded-2xl shadow-md border-2 border-[#3a0a1a] space-y-4 shrink-0">
-        <h3 id="revealQuestionTitle" class="text-3xl md:text-4xl font-black text-white drop-shadow-md leading-tight">Question Title</h3>
-        
-        <div id="voteResultsContainer" class="space-y-2 max-w-6xl mx-auto w-full">
-          <!-- Populated dynamically with massive progress bars -->
-        </div>
-
-        <div class="pt-3 border-t border-white/10 max-w-4xl mx-auto">
-          <span class="text-[10px] font-black uppercase tracking-widest text-pink-400 block mb-1">The Majority Choice</span>
-          <div id="majorityDisplay" class="text-3xl md:text-4xl font-black text-white drop-shadow-lg leading-none">Answer Name</div>
-        </div>
-      </div>
-
-      <!-- DUAL COLUMN LEADERBOARD CONTAINER (Side-by-side, high visibility, fixed heights) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left shrink-0">
-        <!-- COLUMN 1: TOP ROUND SCORERS -->
-        <div class="bg-pink-50 p-4 rounded-2xl border-2 border-pink-100 flex flex-col shadow-sm">
-          <div class="flex justify-between items-center pb-2 border-b-2 border-pink-200 mb-2 shrink-0">
-            <h3 class="text-base font-black text-pink-950 uppercase tracking-widest flex items-center">
-              <i class="fa-solid fa-users mr-2 text-pink-600 text-xl"></i> The Herd (+1 pt)
-            </h3>
-          </div>
-          <div id="roundLeaderboardList" class="space-y-2 max-h-[160px] overflow-y-auto pr-1"></div>
-        </div>
-
-        <!-- COLUMN 2: TOP 5 OVERALL CUMULATIVE LEADERBOARD -->
-        <div class="bg-pink-100 p-4 rounded-2xl border-2 border-pink-200 flex flex-col shadow-sm">
-          <div class="flex justify-between items-center pb-2 border-b-2 border-pink-300 mb-2 shrink-0">
-            <h3 class="text-base font-black text-pink-950 uppercase tracking-widest flex items-center">
-              <i class="fa-solid fa-trophy mr-2 text-pink-700 text-xl"></i> Overall Standings
-            </h3>
-          </div>
-          <!-- Top 5 only, no scrolling needed if we limit to 5 -->
-          <div id="overallLeaderboardList" class="space-y-2 max-h-[160px] overflow-hidden"></div>
-        </div>
-      </div>
-
-      <div class="pt-1 shrink-0">
-        <button id="nextBtn" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl rounded-xl shadow-lg transition">
-          Next Question <i class="fa-solid fa-arrow-right ml-2"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- SCREEN 4B: GRAND FINAL LEADERBOARD -->
-  <div id="hostFinalScreen" class="hidden w-full max-w-4xl mx-auto my-auto space-y-4 text-center">
-    <div class="game-card p-8 md:p-12 space-y-6 shadow-2xl">
-      <div class="text-7xl drop-shadow-lg animate-bounce leading-none">🏆</div>
-      <div>
-        <h2 class="text-4xl md:text-5xl font-black text-pink-950 tracking-tight">Ultimate Mind Readers</h2>
-        <p class="text-sm font-bold text-gray-500 uppercase tracking-widest mt-2">Final Standings</p>
-      </div>
-
-      <div id="finalLeaderboardList" class="space-y-3 max-h-[45vh] overflow-y-auto text-left px-2"></div>
-
-      <div class="pt-4">
-        <button onclick="location.reload()" class="w-full py-4 bg-pink-800 hover:bg-pink-900 text-white font-black text-2xl rounded-xl shadow-lg transition">
-          PLAY AGAIN <i class="fa-solid fa-rotate-right ml-2"></i>
+      <div class="flex gap-4 pt-4">
+        <button onclick="nextQuestion()" class="flex-1 py-4 bg-green-500 hover:bg-green-600 text-white font-black text-lg rounded-xl shadow-lg">
+          Next Item <i class="fa-solid fa-arrow-right ml-2"></i>
         </button>
       </div>
     </div>
@@ -266,18 +148,11 @@
 
   <!-- SCREEN 5: PLAYER JOIN FORM -->
   <div id="playerJoinScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="game-card p-8 text-center space-y-5">
-      <div class="w-16 h-16 bg-pink-100 text-pink-700 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-2">
-        <i class="fa-solid fa-users"></i>
-      </div>
-      <h2 class="text-3xl font-black text-pink-950">Herd Mentality</h2>
-      <p class="text-sm font-bold text-gray-500 pb-2">Enter PIN and a Nickname</p>
-      
-      <input id="inputPin" type="number" placeholder="4-Digit PIN" class="w-full p-4 bg-gray-50 border-2 border-pink-200 rounded-xl text-center text-2xl font-black tracking-widest focus:outline-none focus:border-pink-600 focus:bg-white transition shadow-inner">
-      
-      <input id="inputNickname" type="text" maxlength="15" placeholder="Nickname" class="w-full p-4 bg-gray-50 border-2 border-pink-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-pink-600 focus:bg-white transition shadow-inner">
-      
-      <button id="enterBtn" onclick="joinGame()" class="w-full py-5 bg-pink-600 hover:bg-pink-700 text-white font-black text-xl rounded-xl shadow-lg transform active:scale-95 transition mt-2">
+    <div class="kahoot-card p-6 text-center space-y-4">
+      <h2 class="text-2xl font-black text-purple-900">Join the Game</h2>
+      <input id="inputPin" type="number" placeholder="4-Digit Game PIN" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold tracking-widest focus:outline-none focus:border-purple-600">
+      <input id="inputNickname" type="text" maxlength="15" placeholder="Your Nickname" class="w-full p-4 border-2 border-purple-200 rounded-xl text-center text-xl font-bold focus:outline-none focus:border-purple-600">
+      <button onclick="joinGame()" class="w-full py-4 bg-yellow-500 hover:bg-yellow-600 text-purple-950 font-black text-lg rounded-xl shadow-lg transform active:scale-95 transition">
         ENTER GAME
       </button>
     </div>
@@ -285,147 +160,80 @@
 
   <!-- SCREEN 6: PLAYER WAITING ROOM -->
   <div id="playerWaitingScreen" class="hidden max-w-md mx-auto my-auto w-full text-center space-y-4">
-    <div class="game-card p-10 space-y-6 shadow-xl">
-      <div class="text-7xl animate-bounce drop-shadow-md">🐑</div>
-      <h2 class="text-3xl font-black text-pink-950">You're In!</h2>
-      <div class="bg-pink-50 border border-pink-100 p-4 rounded-xl">
-        <p class="text-sm font-bold text-gray-600">Look at the main projector screen.</p>
-        <p class="text-base font-black text-pink-800 mt-1">Game starting soon!</p>
-      </div>
+    <div class="kahoot-card p-8 space-y-4">
+      <div class="text-5xl animate-bounce">🎉</div>
+      <h2 class="text-2xl font-black text-purple-900">You're In!</h2>
+      <p class="text-sm text-gray-600">See your name on the main projector screen. Game starting soon!</p>
     </div>
   </div>
 
-  <!-- SCREEN 7: PLAYER MCQ SELECTION INPUT -->
+  <!-- SCREEN 7: PLAYER GUESS INPUT -->
   <div id="playerInputScreen" class="hidden max-w-md mx-auto my-auto w-full space-y-4">
-    <div class="game-card p-6 md:p-8 text-center space-y-6 shadow-xl">
-      <div class="pb-2 border-b-2 border-pink-100">
-        <span id="playerQBadge" class="text-xs font-black text-pink-500 uppercase tracking-widest block mb-2">Round 1</span>
-        <!-- Directly display the question on the player's phone -->
-        <h3 id="playerQuestionTitle" class="text-2xl font-black text-pink-950 leading-tight">Question goes here?</h3>
+    <div class="kahoot-card p-6 text-center space-y-6">
+      <div>
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Submit Your Price Guess</span>
+        <h3 id="playerItemTitle" class="text-lg font-bold text-purple-900">Item Name</h3>
+      </div>
+      
+      <div class="relative">
+        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-3xl font-black text-gray-400">$</span>
+        <input id="playerGuessInput" type="number" step="0.01" placeholder="0.00" class="w-full pl-12 pr-4 py-4 text-4xl font-black text-purple-950 border-4 border-purple-300 rounded-2xl text-center focus:outline-none focus:border-purple-600">
       </div>
 
-      <div id="mcqOptionsContainer" class="grid grid-cols-1 gap-4"></div>
+      <div class="grid grid-cols-3 gap-2">
+        <button onclick="addGuess(1)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $1</button>
+        <button onclick="addGuess(5)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $5</button>
+        <button onclick="addGuess(10)" class="py-2 bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold rounded-lg">+ $10</button>
+      </div>
+
+      <button id="submitGuessBtn" onclick="submitGuess()" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-black text-xl rounded-xl shadow-lg">
+        SUBMIT GUESS
+      </button>
     </div>
   </div>
 
   <!-- SCREEN 8: PLAYER GUESS LOCKED -->
   <div id="playerLockedScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-10 space-y-6 shadow-xl">
-      <div class="text-7xl text-pink-600 drop-shadow-sm"><i class="fa-solid fa-circle-check"></i></div>
-      <h2 id="lockedHeader" class="text-3xl font-black text-pink-950">Locked In!</h2>
-      <div class="bg-pink-50 border-2 border-pink-100 p-5 rounded-2xl">
-        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-1">Your Choice</span>
-        <p class="text-2xl font-black text-pink-800" id="lockedChoiceDisplay">Option A</p>
-      </div>
-      <p id="lockedSubtext" class="text-sm font-bold text-gray-500">Waiting for the host to reveal results...</p>
-    </div>
-  </div>
-
-  <!-- SCREEN 8B: PLAYER ROUND RESULT & LEADERBOARD POSITION -->
-  <div id="playerRoundResultScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-8 space-y-6 shadow-xl">
-      <span class="text-sm font-black text-pink-800 uppercase tracking-widest block border-b-2 border-pink-100 pb-3">Round Results</span>
-      
-      <div class="grid grid-cols-2 gap-4">
-        <div class="bg-pink-50 p-5 rounded-2xl border-2 border-pink-100 shadow-inner">
-          <span class="text-xs text-gray-500 font-bold uppercase tracking-wide block">Round Status</span>
-          <div id="playerRoundIconDisplay" class="text-4xl mt-2 mb-1 drop-shadow-sm">🐑</div>
-          <span id="playerRoundPts" class="text-sm font-black text-pink-700 block mt-2 bg-pink-100 py-1 rounded-lg">+0 pts</span>
-        </div>
-        <div class="bg-pink-100 p-5 rounded-2xl border-2 border-pink-200 shadow-inner">
-          <span class="text-xs text-pink-900 font-bold uppercase tracking-wide block">Overall Rank</span>
-          <div id="playerOverallRankDisplay" class="text-4xl font-black text-pink-950 mt-2 mb-1">#-</div>
-          <span id="playerTotalPts" class="text-sm font-black text-gray-800 block mt-2 bg-white/60 py-1 rounded-lg">0 total pts</span>
-        </div>
-      </div>
-
-      <p id="playerResultNotice" class="text-base font-bold text-pink-800 bg-pink-50 p-4 rounded-xl border-2 border-pink-100 leading-snug"></p>
-    </div>
-  </div>
-
-  <!-- SCREEN 9: PLAYER GAME OVER SCREEN -->
-  <div id="playerGameOverScreen" class="hidden max-w-md mx-auto my-auto w-full text-center">
-    <div class="game-card p-10 space-y-6 shadow-xl">
-      <div class="text-7xl animate-bounce drop-shadow-md">🏁</div>
-      <h2 class="text-4xl font-black text-pink-950">Game Over!</h2>
-      <div class="bg-pink-50 p-5 rounded-2xl border-2 border-pink-100">
-        <p class="text-xl font-black text-pink-800">Check the main screen for the ultimate winners!</p>
-      </div>
+    <div class="kahoot-card p-8 space-y-4">
+      <div class="text-5xl text-green-500"><i class="fa-solid fa-circle-check"></i></div>
+      <h2 class="text-2xl font-black text-purple-900">Guess Locked!</h2>
+      <p class="text-xl font-bold text-yellow-600" id="lockedGuessDisplay">$0.00</p>
+      <p class="text-xs text-gray-500">Look up at the main screen for results!</p>
     </div>
   </div>
 
   <script>
+    // --- YOUR FIREBASE CONFIGURATION ---
     const firebaseConfig = {
       apiKey: "AIzaSyBaJRejECntNcDjQ0MCaCJflxzd9hp8lkU",
       authDomain: "price-is-right-b3eba.firebaseapp.com",
-      databaseURL: "https://price-is-right-b3eba-default-rtdb.asia-southeast1.firebasedatabase.app",
+      databaseURL: "https://price-is-right-b3eba-default-rtdb.firebaseio.com",
       projectId: "price-is-right-b3eba",
       storageBucket: "price-is-right-b3eba.firebasestorage.app",
       messagingSenderId: "716413846286",
       appId: "1:716413846286:web:eec1a6d1f9e5254e6b0d5f"
     };
 
-    let db;
-    try {
-      firebase.initializeApp(firebaseConfig);
-      db = firebase.database();
-    } catch(e) {
-      alert("Firebase Init Error: " + e.message);
-    }
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-    // --- DECK (30 Questions) ---
-    const questionsDeck = [
-      { title: "Breakfast, Lunch, or Dinner?", options: ["Breakfast", "Lunch", "Dinner"] },
-      { title: "You have a time machine - where will you go:", options: ["Past", "Future"] },
-      { title: "Best superpower out of 3:", options: ["Invisibility", "Teleportation", "Mind-Reading"] },
-      { title: "Preferred phone communication:", options: ["Text", "Call", "Voice Message"] },
-      { title: "Which is worse?", options: ["Noisy", "Messy", "Late"] },
-      { title: "Hit snooze?", options: ["Never", "Once", "Multiple times"] },
-      { title: "Pineapple on pizza?", options: ["Yes", "No"] },
-      { title: "Pets?", options: ["Dog", "Cat", "Neither"] },
-      { title: "Plane seat?", options: ["Window", "Aisle"] },
-      { title: "Watching a series:", options: ["Binge it", "One episode a day", "2x Speed"] },
-      { title: "Shower time:", options: ["Morning", "Night", "Both"] },
-      { title: "Movie genre:", options: ["Action", "Comedy", "Horror"] },
-      { title: "Vacation type:", options: ["Nature", "City", "Cruise"] },
-      { title: "Bean Curd or Grass Jelly?", options: ["Bean Curd", "Grass Jelly"] },
-      { title: "Mobile platform:", options: ["iOS", "Android"] },
-      { title: "Coffee or Tea?", options: ["Coffee", "Tea", "Neither"] },
-      { title: "Best fries shape:", options: ["Straight cut", "Curly", "Waffle"] },
-      { title: "Would you rather have:", options: ["More intelligence", "More money"] },
-      { title: "KFC or Macs:", options: ["KFC", "Macs"] },
-      { title: "Sweet or Savory?", options: ["Sweet", "Savory"] },
-      { title: "Burger or Pizza?", options: ["Burger", "Pizza"] },
-      { title: "Reading a book:", options: ["Physical book", "E-book", "Audio book"] },
-      { title: "Sleeping time:", options: ["Before 11", "After 11"] },
-      { title: "Best season:", options: ["Summer", "Winter", "Spring or Fall"] },
-      { title: "Working out:", options: ["Gym", "Home", "Outdoors"] },
-      { title: "Video games:", options: ["PC", "Console", "Mobile"] },
-      { title: "Pancakes or Waffles?", options: ["Pancakes", "Waffles"] },
-      { title: "Music listening:", options: ["Headphones", "Speakers"] },
-      { title: "Social media:", options: ["Instagram", "TikTok", "YouTube"] },
-      { title: "Sleep position:", options: ["Back", "Side", "Stomach"] }
+    const itemsDeck = [
+      { name: "Sumifru Philippines Bananas (700g)", price: 2.55, icon: "🍌", category: "Fresh Produce", desc: "Fresh high-land bananas imported from Philippines." },
+      { name: "Sunshine Enriched Softwhite Bread (400g)", price: 2.80, icon: "🍞", category: "Bakery", desc: "Classic white loaf enriched with vitamins and minerals." },
+      { name: "Meiji Pasteurized Fresh Milk (946ml)", price: 3.63, icon: "🥛", category: "Dairy", desc: "100% Pure fresh milk pasteurized for freshness." },
+      { name: "FairPrice 3-ply Facial Tissue (4 x 130s)", price: 4.80, icon: "🧻", category: "Household", desc: "Soft 100% virgin pulp 3-ply facial tissue." },
+      { name: "FairPrice Premium Kitchen Towels (8 rolls)", price: 5.85, icon: "🧻", category: "Household", desc: "Highly absorbent paper kitchen towels." },
+      { name: "Scott Extra Toilet Tissue (10 rolls)", price: 7.95, icon: "🧻", category: "Household", desc: "Extra soft, strong toilet tissue rolls." },
+      { name: "Milo UHT Packet Drink (24 x 200ml Carton)", price: 14.95, icon: "🧃", category: "Beverages", desc: "Carton pack of malt chocolate drinks." },
+      { name: "Ben & Jerry's Ice Cream Pint (473ml)", price: 15.18, icon: "🍦", category: "Frozen Treats", desc: "Premium ice cream pint in assorted flavors." },
+      { name: "SongHe AAA Thai Hom Mali Rice (5kg)", price: 16.20, icon: "🍚", category: "Pantry Staples", desc: "Fragrant premium grade AAA Thai jasmine rice." },
+      { name: "Dyson V8 Slim Fluffy Cordless Vacuum", price: 509.00, icon: "🧹", category: "Electronics", desc: "Lightweight cordless vacuum with powerful suction." }
     ];
 
     let currentGamePin = null;
     let playerKey = null;
+    let timerInterval = null;
     let currentItemIndex = 0;
-    
-    // Core Game States
-    let cumulativeScores = {}; // Keys are playerKey, Values are integer points
-    let currentLoneWolfKeys = []; // Array of playerKeys currently holding the stigma
-    let hasSubmittedCurrentRound = false;
-
-    const profanityList = ["fuck", "shit", "bitch", "asshole", "bastard", "cunt", "dick", "pussy", "lanjiao", "ccb", "cb", "puki", "kanina", "knn"];
-
-    function censorNickname(name) {
-      let cleaned = name;
-      profanityList.forEach(word => {
-        const regex = new RegExp(`\\b${word}\\b|${word}`, "gi");
-        cleaned = cleaned.replace(regex, "***");
-      });
-      return cleaned;
-    }
 
     window.onload = () => {
       const urlParams = new URLSearchParams(window.location.search);
@@ -437,7 +245,7 @@
     };
 
     function hideAllScreens() {
-      const screens = ['roleScreen', 'rulesScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'hostFinalScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen', 'playerRoundResultScreen', 'playerGameOverScreen'];
+      const screens = ['roleScreen', 'hostLobbyScreen', 'hostGameScreen', 'hostRevealScreen', 'playerJoinScreen', 'playerWaitingScreen', 'playerInputScreen', 'playerLockedScreen'];
       screens.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -457,19 +265,18 @@
 
       document.getElementById('hostLobbyScreen').classList.remove('hidden');
 
+      // Sync player joins live from Firebase
       db.ref(`games/${currentGamePin}/players`).on('value', snapshot => {
         const players = snapshot.val() || {};
         const playerList = document.getElementById('playerList');
         playerList.innerHTML = '';
         let count = 0;
 
-        Object.keys(players).forEach(pKey => {
+        Object.values(players).forEach(p => {
           count++;
-          if (cumulativeScores[pKey] === undefined) cumulativeScores[pKey] = 0;
-          
           const badge = document.createElement('span');
-          badge.className = 'px-3 py-1.5 bg-pink-100 text-pink-950 text-sm font-black rounded-lg shadow-sm border border-pink-200';
-          badge.innerText = players[pKey].name;
+          badge.className = 'px-3 py-1 bg-purple-100 text-purple-900 text-xs font-extrabold rounded-full shadow-sm';
+          badge.innerText = p.name;
           playerList.appendChild(badge);
         });
 
@@ -480,329 +287,108 @@
       db.ref(`games/${currentGamePin}/state`).set({ status: 'lobby' });
     }
 
-    function showRulesBeforeGame() {
-      hideAllScreens();
-      document.getElementById('rulesScreen').classList.remove('hidden');
-    }
-
     function startGame() {
       currentItemIndex = 0;
-      currentLoneWolfKeys = [];
       loadItemStage(currentItemIndex);
-    }
-
-    function startGameStage(index, options) {
-      db.ref(`games/${currentGamePin}/answers`).remove();
-
-      db.ref(`games/${currentGamePin}/state`).set({
-        status: 'guessing',
-        currentIndex: index,
-        options: options
-      });
-
-      db.ref(`games/${currentGamePin}/answers`).on('value', snapshot => {
-        const answers = snapshot.val() || {};
-        document.getElementById('submittedCount').innerText = Object.keys(answers).length;
-      });
     }
 
     function loadItemStage(index) {
       hideAllScreens();
       document.getElementById('hostGameScreen').classList.remove('hidden');
 
-      const q = questionsDeck[index];
-      document.getElementById('questionBadge').innerText = `Round ${index + 1}`;
-      document.getElementById('hostQuestionTitle').innerText = q.title;
+      const item = itemsDeck[index];
+      document.getElementById('itemIcon').innerText = item.icon;
+      document.getElementById('itemName').innerText = item.name;
+      document.getElementById('itemCategory').innerText = item.category;
+      document.getElementById('itemDesc').innerText = item.desc;
 
-      const optsDisplay = document.getElementById('hostOptionsDisplay');
-      optsDisplay.innerHTML = '';
-      q.options.forEach((optText, optIdx) => {
-        const badge = document.createElement('div');
-        badge.className = 'px-5 py-3 bg-white text-pink-950 border-4 border-pink-200 rounded-xl font-black text-2xl shadow-sm flex items-center';
-        badge.innerHTML = `<span class="bg-pink-100 text-pink-800 w-8 h-8 flex items-center justify-center rounded-lg text-lg mr-3">${String.fromCharCode(65 + optIdx)}</span> ${optText}`;
-        optsDisplay.appendChild(badge);
+      db.ref(`games/${currentGamePin}/guesses`).remove();
+
+      db.ref(`games/${currentGamePin}/state`).set({
+        status: 'guessing',
+        currentIndex: index,
+        itemName: item.name
       });
 
-      startGameStage(index, q.options);
+      db.ref(`games/${currentGamePin}/guesses`).on('value', snapshot => {
+        const guesses = snapshot.val() || {};
+        document.getElementById('submittedCount').innerText = Object.keys(guesses).length;
+      });
+
+      let timeLeft = 20;
+      document.getElementById('timerDisplay').innerText = timeLeft;
+      clearInterval(timerInterval);
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timerDisplay').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          revealAnswer();
+        }
+      }, 1000);
     }
 
     function revealAnswer() {
+      clearInterval(timerInterval);
       hideAllScreens();
       document.getElementById('hostRevealScreen').classList.remove('hidden');
 
-      const q = questionsDeck[currentItemIndex];
-      document.getElementById('revealQuestionTitle').innerText = q.title;
+      const item = itemsDeck[currentItemIndex];
+      document.getElementById('actualPriceDisplay').innerText = `$${item.price.toFixed(2)}`;
 
       db.ref(`games/${currentGamePin}`).once('value', snapshot => {
         const data = snapshot.val() || {};
         const players = data.players || {};
-        const answers = data.answers || {};
+        const guesses = data.guesses || {};
 
-        // 1. Tally Votes and track who voted for what
-        let voteCounts = {};
-        let optionVoters = {};
-        q.options.forEach((_, i) => { 
-          voteCounts[i] = 0; 
-          optionVoters[i] = []; 
-        });
-        
-        let totalVotes = 0;
-
+        const scores = [];
         Object.keys(players).forEach(pKey => {
           const playerName = players[pKey].name;
-          const pAns = answers[pKey];
-          if (pAns && pAns.selectedIndex !== undefined) {
-            voteCounts[pAns.selectedIndex]++;
-            optionVoters[pAns.selectedIndex].push(playerName);
-            totalVotes++;
-          }
+          const guessVal = guesses[pKey] !== undefined ? parseFloat(guesses[pKey]) : null;
+          let diff = guessVal !== null ? Math.abs(item.price - guessVal) : 999;
+          let points = guessVal !== null ? Math.max(0, Math.round(1000 - diff * 20)) : 0;
+          if (guessVal === item.price) points += 1000;
+
+          scores.push({ name: playerName, guess: guessVal, diff: diff, points: points });
         });
 
-        // 2. Find Majority & Lone Wolves
-        let maxVotes = 0;
-        Object.values(voteCounts).forEach(v => {
-          if (v > maxVotes) maxVotes = v;
-        });
+        scores.sort((a, b) => b.points - a.points);
 
-        let majorityIndices = [];
-        let optionIndicesWithOneVote = [];
-        
-        if (maxVotes > 0) {
-          Object.keys(voteCounts).forEach(idx => {
-            const intIdx = parseInt(idx);
-            if (voteCounts[idx] === maxVotes) majorityIndices.push(intIdx);
-            
-            if (voteCounts[idx] === 1 && maxVotes > 1) {
-              optionIndicesWithOneVote.push(intIdx);
-            }
-          });
-        }
-
-        // 3. Process Player Scores and Lone Wolf Stigma
-        let roundList = [];
-        let newlyStigmatizedKeys = [];
-
-        Object.keys(players).forEach(pKey => {
-          const playerName = players[pKey].name;
-          const pAns = answers[pKey];
-
-          if (!pAns) {
-            roundList.push({ key: pKey, name: playerName, points: 0, reason: "No Answer" });
-          } else {
-            // Check for points
-            if (majorityIndices.includes(pAns.selectedIndex)) {
-              const pts = 1; 
-              cumulativeScores[pKey] = (cumulativeScores[pKey] || 0) + pts;
-              roundList.push({ key: pKey, name: playerName, points: pts, total: cumulativeScores[pKey], reason: "Herd" });
-            } else {
-              roundList.push({ key: pKey, name: playerName, points: 0, total: cumulativeScores[pKey], reason: "Minority" });
-            }
-
-            // Check if they are the lone wolf this round
-            if (optionIndicesWithOneVote.includes(pAns.selectedIndex)) {
-              newlyStigmatizedKeys.push(pKey);
-            }
-          }
-        });
-
-        // Pass the token!
-        if (newlyStigmatizedKeys.length > 0) {
-          currentLoneWolfKeys = newlyStigmatizedKeys;
-        }
-
-        // 4. Render Tight Bar Charts and show who voted for what
-        const resultsContainer = document.getElementById('voteResultsContainer');
-        resultsContainer.innerHTML = '';
-        
-        q.options.forEach((optText, idx) => {
-          const votes = voteCounts[idx] || 0;
-          const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
-          const isMajority = majorityIndices.includes(idx);
-          const votersForThisOption = optionVoters[idx];
-          
+        const lbList = document.getElementById('leaderboardList');
+        lbList.innerHTML = '';
+        scores.forEach((s, idx) => {
           const row = document.createElement('div');
-          row.className = 'w-full bg-black/30 rounded-xl p-2 border border-white/10 flex flex-col space-y-1';
-          
-          const barColor = isMajority ? 'bg-pink-600' : 'bg-pink-900/80';
-          
-          let badgesHtml = '';
-          if (votersForThisOption.length > 0) {
-            badgesHtml = `<div class="flex flex-wrap gap-1.5 mt-0.5 z-10 px-2 pb-1">` + 
-              votersForThisOption.map(name => `<span class="px-2 py-0.5 bg-black/50 text-white rounded text-xs font-bold shadow-sm">${name}</span>`).join('') + 
-              `</div>`;
-          } else {
-            badgesHtml = `<div class="text-xs font-bold text-white/40 mt-0.5 z-10 px-2 pb-1 italic">No votes</div>`;
-          }
-
-          row.innerHTML = `
-            <div class="relative w-full flex justify-between items-center overflow-hidden rounded-lg p-2">
-              <div class="absolute top-0 left-0 h-full ${barColor} vote-bar opacity-90 rounded-lg" style="width: 0%"></div>
-              <div class="relative z-10 flex items-center gap-3">
-                <span class="w-8 h-8 rounded-full bg-black/40 flex items-center justify-center font-black text-base shadow-sm">${String.fromCharCode(65 + idx)}</span>
-                <span class="font-black text-2xl md:text-3xl text-white drop-shadow-md">${optText}</span>
-              </div>
-              <div class="relative z-10 font-black text-2xl md:text-3xl text-white drop-shadow-md">
-                ${votes} <span class="text-sm font-bold opacity-80 uppercase tracking-widest">votes</span> (${percentage}%)
-              </div>
-            </div>
-            ${badgesHtml}
-          `;
-          resultsContainer.appendChild(row);
-          
-          // Trigger animation shortly after mount
-          setTimeout(() => {
-            const bar = row.querySelector('.vote-bar');
-            if (bar) bar.style.width = `${percentage}%`;
-          }, 150);
-        });
-
-        // 5. Update Majority Text
-        const majorityDisplay = document.getElementById('majorityDisplay');
-        if (totalVotes === 0) {
-          majorityDisplay.innerText = "No votes cast!";
-        } else if (majorityIndices.length > 1) {
-          const tiedAnswers = majorityIndices.map(i => q.options[i]).join(" & ");
-          majorityDisplay.innerText = `It's a Tie! (${tiedAnswers})`;
-        } else {
-          majorityDisplay.innerText = q.options[majorityIndices[0]];
-        }
-
-        // 6. TOP ROUND STANDINGS
-        let roundSorted = [...roundList].filter(r => r.points > 0).sort((a, b) => b.points - a.points);
-        const roundLb = document.getElementById('roundLeaderboardList');
-        roundLb.innerHTML = '';
-        
-        if (roundSorted.length === 0) {
-          roundLb.innerHTML = '<p class="text-gray-500 text-sm font-bold italic py-2">No one scored points this round.</p>';
-        } else {
-          roundSorted.forEach((s) => {
-            const isWolf = currentLoneWolfKeys.includes(s.key);
-            const row = document.createElement('div');
-            row.className = `flex justify-between items-center p-2 rounded-lg border text-sm bg-white border-pink-100 shadow-sm`;
-            row.innerHTML = `
-              <div class="flex items-center space-x-2">
-                <span class="text-lg">🐑</span>
-                <span class="font-bold text-gray-900 truncate max-w-[150px]">${s.name} ${isWolf ? '🐺' : ''}</span>
-              </div>
-              <span class="font-black text-sm text-pink-900 bg-pink-100 px-2 py-0.5 rounded-md">+${s.points}</span>
-            `;
-            roundLb.appendChild(row);
-          });
-        }
-
-        // 7. TOP 5 OVERALL STANDINGS & Check for Game Over
-        let overallSorted = [...roundList].sort((a, b) => (cumulativeScores[b.key]||0) - (cumulativeScores[a.key]||0));
-        const overallLb = document.getElementById('overallLeaderboardList');
-        overallLb.innerHTML = '';
-
-        let highestScore = 0;
-        let playerRankMap = {};
-        
-        overallSorted.forEach((s, idx) => {
-          const sTotal = cumulativeScores[s.key] || 0;
-          if (sTotal > highestScore) highestScore = sTotal;
-
-          const isWolf = currentLoneWolfKeys.includes(s.key);
-          playerRankMap[s.key] = {
-            overallRank: idx + 1,
-            points: s.points,
-            total: sTotal,
-            isLoneWolf: isWolf,
-            isNewWolf: newlyStigmatizedKeys.includes(s.key),
-            reason: s.reason || null
-          };
-        });
-
-        // Restrict to top 5 strictly on the view to save vertical space
-        overallSorted.slice(0, 5).forEach((s, idx) => {
-          const isWolf = currentLoneWolfKeys.includes(s.key);
-          const row = document.createElement('div');
-          row.className = `flex justify-between items-center p-2 rounded-lg border text-sm bg-white border-pink-200 shadow-sm`;
+          row.className = 'flex justify-between items-center p-3 bg-purple-50 rounded-xl border border-purple-100';
           row.innerHTML = `
             <div class="flex items-center space-x-3">
-              <span class="w-6 text-center font-black text-pink-800 text-lg">#${idx + 1}</span>
-              <span class="font-black text-gray-900 truncate max-w-[150px]">${s.name} ${isWolf ? '🐺' : ''}</span>
+              <span class="w-6 text-center font-black text-purple-800">#${idx + 1}</span>
+              <span class="font-bold text-gray-800">${s.name}</span>
             </div>
-            <span class="font-black text-lg text-pink-950">${cumulativeScores[s.key] || 0} pts</span>
+            <div class="text-right">
+              <span class="text-xs text-gray-500 font-semibold block">Guess: ${s.guess !== null ? '$' + s.guess.toFixed(2) : 'No Guess'}</span>
+              <span class="text-sm font-black text-purple-900">+${s.points} pts</span>
+            </div>
           `;
-          overallLb.appendChild(row);
+          lbList.appendChild(row);
         });
 
-        const nextBtn = document.getElementById('nextBtn');
-        if (highestScore >= 10 || currentItemIndex >= questionsDeck.length - 1) {
-          nextBtn.onclick = showFinalLeaderboard;
-          nextBtn.innerHTML = 'VIEW GRAND PODIUM <i class="fa-solid fa-trophy ml-2"></i>';
-        } else {
-          nextBtn.onclick = nextQuestion;
-          nextBtn.innerHTML = 'Next Question <i class="fa-solid fa-arrow-right ml-2"></i>';
-        }
-
-        try { confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } }); } catch(e){}
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 
         db.ref(`games/${currentGamePin}/state`).set({
           status: 'revealed',
-          ranks: playerRankMap
+          actualPrice: item.price
         });
       });
     }
 
     function nextQuestion() {
       currentItemIndex++;
-      if (currentItemIndex < questionsDeck.length) {
+      if (currentItemIndex < itemsDeck.length) {
         loadItemStage(currentItemIndex);
       } else {
-        showFinalLeaderboard();
+        alert("Game Over! Thank you for playing.");
+        location.reload();
       }
-    }
-
-    function showFinalLeaderboard() {
-      hideAllScreens();
-      document.getElementById('hostFinalScreen').classList.remove('hidden');
-
-      db.ref(`games/${currentGamePin}/state`).set({ status: 'gameover' });
-
-      db.ref(`games/${currentGamePin}/players`).once('value', snapshot => {
-        const playersData = snapshot.val() || {};
-
-        const finalRankings = Object.keys(cumulativeScores).map(pKey => ({
-          key: pKey,
-          name: playersData[pKey] ? playersData[pKey].name : 'Unknown',
-          score: cumulativeScores[pKey],
-          isWolf: currentLoneWolfKeys.includes(pKey)
-        })).sort((a, b) => {
-          // Lone wolves are sent to the bottom regardless of score
-          if (a.isWolf && !b.isWolf) return 1;
-          if (!a.isWolf && b.isWolf) return -1;
-          return b.score - a.score;
-        });
-
-        const finalLb = document.getElementById('finalLeaderboardList');
-        finalLb.innerHTML = '';
-
-        finalRankings.forEach((r, idx) => {
-          let medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`;
-          let cardStyle = idx === 0 ? 'bg-pink-100 border-pink-400' : idx === 1 ? 'bg-gray-100 border-gray-300' : idx === 2 ? 'bg-orange-50 border-orange-200' : 'bg-pink-50 border-pink-100';
-
-          if (r.isWolf) {
-            medal = '🐺';
-            cardStyle = 'bg-red-100 border-red-400 opacity-90'; 
-          }
-
-          const row = document.createElement('div');
-          row.className = `flex justify-between items-center p-4 rounded-xl border-2 ${cardStyle} shadow-sm`;
-          row.innerHTML = `
-            <div class="flex items-center space-x-4">
-              <span class="text-3xl font-black">${medal}</span>
-              <span class="text-2xl font-black text-gray-900 ${r.isWolf ? 'line-through' : ''}">${r.name}</span>
-              ${r.isWolf ? '<span class="text-xs font-black text-red-800 bg-red-200 border border-red-300 px-2 py-0.5 rounded-md">DISQUALIFIED</span>' : ''}
-            </div>
-            <span class="text-3xl font-black ${r.isWolf ? 'text-red-800' : 'text-pink-950'}">${r.score} PTS</span>
-          `;
-          finalLb.appendChild(row);
-        });
-
-        try { confetti({ particleCount: 350, spread: 150, origin: { y: 0.4 } }); } catch(e){}
-      });
     }
 
     // --- PLAYER LOGIC ---
@@ -813,17 +399,12 @@
 
     function joinGame() {
       const pin = document.getElementById('inputPin').value.trim();
-      let rawNickname = document.getElementById('inputNickname').value.trim();
-      const btn = document.getElementById('enterBtn');
+      const nickname = document.getElementById('inputNickname').value.trim();
 
-      if (!pin || !rawNickname) {
+      if (!pin || !nickname) {
         alert("Please enter both PIN and Nickname");
         return;
       }
-
-      const nickname = censorNickname(rawNickname);
-      btn.disabled = true;
-      btn.innerText = "CONNECTING...";
 
       currentGamePin = pin;
       playerKey = 'player_' + Math.random().toString(36).substr(2, 9);
@@ -835,13 +416,9 @@
         document.getElementById('playerWaitingScreen').classList.remove('hidden');
         listenToGameState();
       }).catch(err => {
-        btn.disabled = false;
-        btn.innerText = "ENTER GAME";
-        alert("Firebase Connection Error: " + err.message);
+        alert("Unable to join. Please double check PIN.");
       });
     }
-
-    let lastRoundIndex = -1;
 
     function listenToGameState() {
       db.ref(`games/${currentGamePin}/state`).on('value', snapshot => {
@@ -849,81 +426,32 @@
         if (!state) return;
 
         if (state.status === 'guessing') {
-          if (lastRoundIndex !== state.currentIndex) {
-            lastRoundIndex = state.currentIndex;
-            hasSubmittedCurrentRound = false;
-          }
-
-          if (!hasSubmittedCurrentRound) {
-            hideAllScreens();
-            document.getElementById('playerInputScreen').classList.remove('hidden');
-            document.getElementById('playerQBadge').innerText = `Round ${state.currentIndex + 1}`;
-            
-            // Directly display the question on the player's phone
-            document.getElementById('playerQuestionTitle').innerText = questionsDeck[state.currentIndex].title;
-
-            const container = document.getElementById('mcqOptionsContainer');
-            container.innerHTML = '';
-
-            (state.options || []).forEach((optText, optIdx) => {
-              const btn = document.createElement('button');
-              btn.className = 'w-full py-5 bg-pink-100 hover:bg-pink-200 text-pink-950 font-black text-xl rounded-2xl shadow-sm border-2 border-pink-200 active:scale-95 transition text-left px-6 flex items-center justify-between';
-              btn.innerHTML = `<span>${optText}</span> <span class="bg-pink-800 text-white w-8 h-8 flex items-center justify-center rounded-xl text-sm font-bold shadow-inner">${String.fromCharCode(65 + optIdx)}</span>`;
-              btn.onclick = () => submitMCQChoice(optIdx, optText);
-              container.appendChild(btn);
-            });
-          }
-        } else if (state.status === 'revealed') {
           hideAllScreens();
-          document.getElementById('playerRoundResultScreen').classList.remove('hidden');
-          
-          if (state.ranks && state.ranks[playerKey]) {
-            const myData = state.ranks[playerKey];
-            document.getElementById('playerOverallRankDisplay').innerText = `#${myData.overallRank}`;
-            document.getElementById('playerRoundPts').innerText = `+${myData.points} pt(s)`;
-
-            const iconDisplay = document.getElementById('playerRoundIconDisplay');
-            const noticeEl = document.getElementById('playerResultNotice');
-            
-            if (myData.reason === "No Answer") {
-              iconDisplay.innerText = "⏳";
-              noticeEl.className = "text-base font-bold text-gray-600 bg-gray-50 p-4 rounded-xl border-2 border-gray-200 leading-snug";
-              noticeEl.innerText = "No choice was submitted.";
-            } else if (myData.isNewWolf) {
-              iconDisplay.innerText = "🐺";
-              noticeEl.className = "text-base font-bold text-red-700 bg-red-50 p-4 rounded-xl border-2 border-red-300 leading-snug";
-              noticeEl.innerText = "NEW LONE WOLF! You took the stigma because you were the only one who picked your option.";
-            } else if (myData.isLoneWolf) {
-              iconDisplay.innerText = "🐺";
-              noticeEl.className = "text-base font-bold text-red-700 bg-red-50 p-4 rounded-xl border-2 border-red-300 leading-snug";
-              noticeEl.innerText = "LONE WOLF STIGMA: You cannot win unless someone else takes the stigma.";
-            } else if (myData.reason === "Minority") {
-              iconDisplay.innerText = "❌";
-              noticeEl.className = "text-base font-bold text-orange-700 bg-orange-50 p-4 rounded-xl border-2 border-orange-200 leading-snug";
-              noticeEl.innerText = "You went against the herd. 0 pts.";
-            } else {
-              iconDisplay.innerText = "🐑";
-              noticeEl.className = "text-base font-bold text-green-700 bg-green-50 p-4 rounded-xl border-2 border-green-200 leading-snug";
-              noticeEl.innerText = "You went with the herd! +1 pt.";
-            }
-          }
-        } else if (state.status === 'gameover') {
-          hideAllScreens();
-          document.getElementById('playerGameOverScreen').classList.remove('hidden');
+          document.getElementById('playerInputScreen').classList.remove('hidden');
+          document.getElementById('playerItemTitle').innerText = state.itemName || "Guess Price";
+          document.getElementById('playerGuessInput').value = '';
+          document.getElementById('submitGuessBtn').disabled = false;
         }
       });
     }
 
-    function submitMCQChoice(optIdx, optText) {
-      db.ref(`games/${currentGamePin}/answers/${playerKey}`).set({
-        selectedIndex: optIdx
-      }).then(() => {
-        hasSubmittedCurrentRound = true;
+    function addGuess(val) {
+      const input = document.getElementById('playerGuessInput');
+      let curr = parseFloat(input.value) || 0;
+      input.value = (curr + val).toFixed(2);
+    }
+
+    function submitGuess() {
+      const guessVal = parseFloat(document.getElementById('playerGuessInput').value);
+      if (isNaN(guessVal) || guessVal < 0) {
+        alert("Please enter a valid price guess.");
+        return;
+      }
+
+      db.ref(`games/${currentGamePin}/guesses/${playerKey}`).set(guessVal.toFixed(2)).then(() => {
         hideAllScreens();
         document.getElementById('playerLockedScreen').classList.remove('hidden');
-        document.getElementById('lockedHeader').innerText = "Locked In!";
-        document.getElementById('lockedChoiceDisplay').innerText = optText;
-        document.getElementById('lockedSubtext').innerText = "Waiting for the host to reveal the results...";
+        document.getElementById('lockedGuessDisplay').innerText = `$${guessVal.toFixed(2)}`;
       });
     }
   </script>
